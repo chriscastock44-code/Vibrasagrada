@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
-const COOKIE_NAME = "vobra_admin_session";
+const COOKIE_NAME = "vibra_admin_session";
 
 // Optimistic check only (per Next.js docs, Proxy should not be the sole
 // authorization mechanism) — every protected admin page/API route also

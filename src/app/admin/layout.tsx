@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import "../globals.css";
 
 export const metadata: Metadata = {
-  title: "Admin — Vobra Sagrada",
+  title: "Admin — Vibra Sagrada",
   robots: { index: false, follow: false },
 };
 

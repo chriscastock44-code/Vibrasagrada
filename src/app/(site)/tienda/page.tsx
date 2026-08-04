@@ -3,7 +3,7 @@ import { getAllProducts } from "@/lib/products";
 import { formatPrice } from "@/lib/format";
 
 export const metadata = {
-  title: "Tienda — Vobra Sagrada",
+  title: "Tienda — Vibra Sagrada",
 };
 
 // Products are managed through /admin and can change at any time, so this

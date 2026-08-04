@@ -37,7 +37,7 @@ export default function HomePage() {
             Una marca con alma
           </p>
           <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl">
-            Vobra Sagrada
+            Vibra Sagrada
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-balance text-black/60">
             Productos 100% personalizados, hechos con un alma y una razón de ser.
@@ -66,8 +66,8 @@ export default function HomePage() {
         <div className="mx-auto max-w-3xl px-6 py-20 text-center">
           <h2 className="text-2xl font-semibold">Nuestra historia</h2>
           <p className="mt-4 text-black/60">
-            {/* TODO: contar la historia real de Vobra Sagrada — origen, misión, qué hace único a cada producto */}
-            Cada pieza de Vobra Sagrada se crea a mano, pensada especialmente
+            {/* TODO: contar la historia real de Vibra Sagrada — origen, misión, qué hace único a cada producto */}
+            Cada pieza de Vibra Sagrada se crea a mano, pensada especialmente
             para quien la recibe. Creemos que los objetos con significado
             perduran más que cualquier otra cosa.
           </p>

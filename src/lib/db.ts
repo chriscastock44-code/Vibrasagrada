@@ -7,17 +7,17 @@ if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-const dbPath = path.join(dataDir, "vobra-sagrada.db");
+const dbPath = path.join(dataDir, "vibra-sagrada.db");
 
 // Reuse a single connection across hot reloads in dev.
 declare global {
    
-  var __vobraDb: Database.Database | undefined;
+  var __vibraDb: Database.Database | undefined;
 }
 
-export const db = global.__vobraDb ?? new Database(dbPath);
+export const db = global.__vibraDb ?? new Database(dbPath);
 if (process.env.NODE_ENV !== "production") {
-  global.__vobraDb = db;
+  global.__vibraDb = db;
 }
 
 db.pragma("journal_mode = WAL");

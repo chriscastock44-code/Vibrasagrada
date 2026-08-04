@@ -16,7 +16,7 @@ export default function AdminNav() {
     <header className="border-b border-black/10">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <Link href="/admin" className="font-semibold tracking-wide">
-          Vobra Sagrada · Admin
+          Vibra Sagrada · Admin
         </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link href="/admin/productos/nuevo" className="hover:opacity-70">

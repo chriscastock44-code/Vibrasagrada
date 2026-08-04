@@ -1,4 +1,4 @@
-# Vobra Sagrada — sitio web + tienda online
+# Vibra Sagrada — sitio web + tienda online
 
 Landing page y tienda online bajo el mismo dominio, con panel de administración
 para cargar productos, precios y opciones de personalización. Construido con
@@ -20,7 +20,7 @@ marca) y conectar las llaves reales de pago.
   baja de productos, precio, stock, imágenes y campos de personalización.
 - **Pagos** — integración con Stripe Checkout (modo prueba mientras no haya
   llaves reales; con una nota clara en pantalla si falta configurar).
-- **Base de datos** — SQLite local (`data/vobra-sagrada.db`), sin
+- **Base de datos** — SQLite local (`data/vibra-sagrada.db`), sin
   dependencias externas ni servicios de pago de por medio para desarrollar.
 
 ## 1. Poner el proyecto a correr en tu computadora
@@ -63,7 +63,7 @@ cp .env.example .env.local
   fallar, y en desarrollo puedes simular un pedido de prueba para probar el
   flujo completo (carrito → checkout → gracias).
 
-Ya dejé un `.env.local` con una contraseña de prueba (`vobra2026`) generada
+Ya dejé un `.env.local` con una contraseña de prueba (`vibra2026`) generada
 automáticamente para que puedas probar el panel de admin de inmediato.
 **Cámbiala antes de usar el sitio en producción.**
 
@@ -158,7 +158,7 @@ base de datos SQLite funciona tal cual porque el servidor es persistente
      `ADMIN_PASSWORD_HASH`, `STRIPE_SECRET_KEY`, etc.) — cárgalas en la sección
      de variables de entorno del panel de Node.js, no subas el archivo
      `.env.local` al repositorio.
-5. Haz respaldos periódicos del archivo `data/vobra-sagrada.db` (contiene tus
+5. Haz respaldos periódicos del archivo `data/vibra-sagrada.db` (contiene tus
    productos y pedidos) — por ejemplo descargándolo por SFTP cada cierto
    tiempo, o migrando a una base de datos administrada más adelante.
 
@@ -201,7 +201,7 @@ scripts/
   seed.mjs               → productos de ejemplo
   hash-password.mjs      → genera el hash de la contraseña de admin
 data/
-  vobra-sagrada.db        → la base de datos (se crea sola al arrancar)
+  vibra-sagrada.db        → la base de datos (se crea sola al arrancar)
 ```
 
 ## 6. Próximos pasos sugeridos

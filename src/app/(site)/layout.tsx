@@ -6,8 +6,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Vobra Sagrada",
-  description: "Vobra Sagrada — productos 100% personalizados, con alma y una razón de ser.",
+  title: "Vibra Sagrada",
+  description: "Vibra Sagrada — productos 100% personalizados, con alma y una razón de ser.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
