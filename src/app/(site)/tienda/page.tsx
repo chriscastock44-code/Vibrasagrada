@@ -10,8 +10,8 @@ export const metadata = {
 // page must not be cached as static HTML at build time.
 export const dynamic = "force-dynamic";
 
-export default function StorePage() {
-  const products = getAllProducts({ onlyActive: true });
+export default async function StorePage() {
+  const products = await getAllProducts({ onlyActive: true });
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">

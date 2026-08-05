@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     const payment = await paymentClient.get({ id: paymentId });
 
     if (payment.status === "approved" && payment.external_reference) {
-      markOrderPaid(payment.external_reference, String(payment.id));
+      await markOrderPaid(payment.external_reference, String(payment.id));
     }
   } catch (err) {
     console.error("Error procesando webhook de Mercado Pago:", err);

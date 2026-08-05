@@ -5,7 +5,7 @@ import type { ProductInput } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
   const onlyActive = request.nextUrl.searchParams.get("all") !== "1";
-  const products = getAllProducts({ onlyActive });
+  const products = await getAllProducts({ onlyActive });
   return NextResponse.json({ products });
 }
 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const product = createProduct(body);
+    const product = await createProduct(body);
     return NextResponse.json({ product }, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Error desconocido";

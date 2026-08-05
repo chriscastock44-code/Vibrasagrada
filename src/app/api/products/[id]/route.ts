@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const product = getProductById(Number(id));
+  const product = await getProductById(Number(id));
   if (!product) {
     return NextResponse.json({ error: "Producto no encontrado" }, { status: 404 });
   }
@@ -26,7 +26,7 @@ export async function PUT(
   const { id } = await params;
   const body = (await request.json()) as ProductInput;
 
-  const updated = updateProduct(Number(id), body);
+  const updated = await updateProduct(Number(id), body);
   if (!updated) {
     return NextResponse.json({ error: "Producto no encontrado" }, { status: 404 });
   }
@@ -42,6 +42,6 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  deleteProduct(Number(id));
+  await deleteProduct(Number(id));
   return NextResponse.json({ ok: true });
 }

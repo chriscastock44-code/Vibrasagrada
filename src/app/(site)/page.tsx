@@ -10,8 +10,9 @@ export const dynamic = "force-dynamic";
 
 const VALUE_TAGS = ["Reutilizable", "Hecho a pedido", "Diseño autoral", "Durable"];
 
-export default function HomePage() {
-  const featured = getAllProducts({ onlyActive: true }).slice(0, 3);
+export default async function HomePage() {
+  const allFeatured = await getAllProducts({ onlyActive: true });
+  const featured = allFeatured.slice(0, 3);
 
   return (
     <div>

@@ -15,22 +15,25 @@ export async function POST(request: NextRequest) {
   }
 
   // Re-validate every item and its price against the database — never trust
-  // prices sent from the client.
+  // prices sent from the client. Products are looked up once here and reused
+  // below when building the Mercado Pago items, instead of querying again.
   let verifiedTotalCents = 0;
   const currency = items[0]?.currency || "MXN";
+  const productsById = new Map<number, Awaited<ReturnType<typeof getProductById>>>();
 
   for (const item of items) {
-    const product = getProductById(item.productId);
+    const product = await getProductById(item.productId);
     if (!product || !product.active) {
       return NextResponse.json(
         { error: `El producto "${item.name}" ya no está disponible.` },
         { status: 400 }
       );
     }
+    productsById.set(item.productId, product);
     verifiedTotalCents += product.priceCents * item.quantity;
   }
 
-  const orderId = createOrder({
+  const orderId = await createOrder({
     items,
     customerEmail,
     totalCents: verifiedTotalCents,
@@ -54,7 +57,7 @@ export async function POST(request: NextRequest) {
     const preference = await preferenceClient.create({
       body: {
         items: items.map((item) => {
-          const product = getProductById(item.productId)!;
+          const product = productsById.get(item.productId)!;
           const personalizationSummary = Object.entries(item.personalization || {})
             .map(([k, v]) => `${k}: ${v.startsWith("data:") ? "(archivo adjunto)" : v}`)
             .join(" · ");
@@ -81,7 +84,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    setOrderPreferenceId(orderId, preference.id!);
+    await setOrderPreferenceId(orderId, preference.id!);
 
     return NextResponse.json({ url: preference.init_point });
   } catch (err) {

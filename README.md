@@ -2,7 +2,9 @@
 
 Landing page y tienda online bajo el mismo dominio, con panel de administración
 para cargar productos, precios y opciones de personalización. Construido con
-Next.js (App Router), TypeScript, Tailwind CSS y SQLite (`better-sqlite3`).
+Next.js (App Router), TypeScript, Tailwind CSS y una base de datos SQLite
+(vía [Turso](https://turso.tech)/libSQL, con SQLite local como fallback en
+desarrollo).
 
 La estructura, el backend, la tienda, el carrito, el checkout y el panel de
 admin funcionan de punta a punta, y ya tiene aplicada la identidad visual de
@@ -21,8 +23,11 @@ conectar las llaves reales de pago y definir el copy final de contenido.
 - **Pagos** — integración con Mercado Pago Checkout Pro (modo prueba mientras
   no haya credenciales reales; con una nota clara en pantalla si falta
   configurar).
-- **Base de datos** — SQLite local (`data/vibra-sagrada.db`), sin
-  dependencias externas ni servicios de pago de por medio para desarrollar.
+- **Base de datos** — SQLite compatible con Turso (libSQL): en desarrollo usa
+  automáticamente un archivo local (`data/vibra-sagrada.db`), sin necesitar
+  ninguna cuenta externa; en producción se conecta a una base de datos real
+  en Turso (ver sección "Base de datos" más abajo — importante antes de
+  desplegar).
 
 ## 1. Poner el proyecto a correr en tu computadora
 
@@ -110,7 +115,47 @@ puedes:
   almacenamiento (p. ej. Cloudinary, S3, o el propio almacenamiento de
   Hostinger) — es la siguiente pieza natural a agregar.
 
-## 3. Pagos
+## 3. Base de datos
+
+El proyecto usa un archivo SQLite local mientras desarrollas — no necesitas
+crear ninguna cuenta para correr `npm run dev`. Pero para **desplegar en
+producción es obligatorio conectar una base de datos en
+[Turso](https://turso.tech)** (libSQL, compatible con SQLite), por dos
+razones:
+
+1. Hostinger (y la mayoría de hostings de Node.js administrados) no permite
+   compilar módulos nativos al instalar dependencias — no tienen Python ni
+   herramientas de compilación disponibles. El driver de Turso no necesita
+   compilar nada: descarga un binario ya compilado según tu plataforma,
+   así que `npm install` funciona sin problema ahí.
+2. Un archivo SQLite viviendo en el propio disco de la app no está
+   garantizado a sobrevivir un redeploy o reinicio en hosting administrado.
+   Turso es una base de datos de verdad en la nube: tus productos y pedidos
+   quedan a salvo pase lo que pase con el servidor de la app.
+
+Para configurarla:
+
+1. Crea una cuenta gratis en [turso.tech](https://turso.tech).
+2. Desde el dashboard, crea una base de datos nueva (dale un nombre, por
+   ejemplo `vibra-sagrada`, y elige la región más cercana a tus clientes).
+3. En la página de esa base de datos vas a encontrar la **Database URL**
+   (empieza con `libsql://...`) y un botón para **crear un token de
+   autenticación** (auth token).
+4. Agrega ambos valores como variables de entorno donde despliegues el sitio
+   (en Hostinger, en la sección de variables de entorno del Web App):
+   - `TURSO_DATABASE_URL`
+   - `TURSO_AUTH_TOKEN`
+5. La primera vez que la app arranque con esas variables, crea las tablas
+   automáticamente (mismo esquema que usa el archivo local) — no hace falta
+   ninguna migración manual.
+
+Si ya tenías productos cargados en el archivo local (`data/vibra-sagrada.db`)
+y quieres llevarlos a Turso, la CLI de Turso incluye un comando de import
+directo desde un archivo SQLite (`turso db shell <nombre> < dump.sql`, o
+revisa `turso db import` en su documentación) — avísame si llegas a este
+punto y te ayudo con el comando exacto.
+
+## 4. Pagos
 
 El checkout usa [Mercado Pago Checkout Pro](https://www.mercadopago.com.mx/developers/es/docs/checkout-pro/landing):
 el cliente paga en una página alojada por Mercado Pago (tarjeta, transferencia,
@@ -140,61 +185,36 @@ confirmación automática solo se puede probar de verdad ya desplegado (o con
 un túnel como [ngrok](https://ngrok.com) apuntando a tu `localhost:3000`
 mientras desarrollas).
 
-## 4. Desplegar en tu dominio de Hostinger
+## 5. Desplegar en tu dominio de Hostinger
 
-Tu dominio ya está en Hostinger. Hay dos caminos según el tipo de plan que
-tengas — revisa en hPanel si tu plan incluye **"Node.js"** como tipo de sitio
-(Business, Cloud y VPS normalmente sí; hosting compartido básico normalmente
-no).
+Tu dominio ya está en Hostinger, en un plan que incluye **Web Apps**
+(despliegue de Node.js). Estos son los pasos:
 
-### Opción A — Directamente en Hostinger (recomendada si tu plan soporta Node.js)
+1. Sube este proyecto a un repositorio de GitHub (ya tienes GitHub conectado
+   a Hostinger).
+2. En hPanel → **Sitios web** → **Web Apps** → **Empezar ya**.
+3. Elige **Import Git Repository** y selecciona el repositorio.
+4. En "¿Qué nombre de dominio quieres utilizar?", escribe tu dominio
+   directamente aunque no aparezca en la lista de sugerencias (si ya está
+   registrado en la misma cuenta de Hostinger, lo conecta automáticamente).
+5. En "Revisa los ajustes de compilación", el preajuste **Next.js** y los
+   valores por defecto ya están bien — no hace falta tocarlos.
+6. Agrega las variables de entorno (botón "Añadir" → una fila por variable):
+   `ADMIN_SESSION_SECRET`, `ADMIN_PASSWORD_HASH`, `MERCADOPAGO_ACCESS_TOKEN`,
+   `TURSO_DATABASE_URL` y `TURSO_AUTH_TOKEN` (ver secciones "Base de datos" y
+   "Pagos" arriba para conseguir estos dos últimos). **Ojo:** pega los
+   valores tal cual, sin las barras invertidas `\` que sí lleva
+   `ADMIN_PASSWORD_HASH` dentro de `.env.local` — esas solo son necesarias en
+   archivos `.env`, aquí no.
+7. Dale a implementar/desplegar.
 
-Mantiene todo bajo tu cuenta de Hostinger, sin depender de un tercero, y la
-base de datos SQLite funciona tal cual porque el servidor es persistente
-(no es "serverless").
+**Nota sobre `better-sqlite3`:** este proyecto usa Turso (libSQL) en vez de
+`better-sqlite3` precisamente porque el entorno de compilación de Hostinger
+no tiene Python ni herramientas de compilación — un módulo nativo como
+`better-sqlite3` falla ahí con un error de `node-gyp`. El driver de Turso no
+tiene ese problema porque no compila nada, descarga un binario ya hecho.
 
-1. Sube este proyecto a un repositorio de GitHub (ya tienes GitHub conectado,
-   así que este paso es directo: crea un repo nuevo y haz push del código).
-2. En hPanel → **Sitios web** → **Agregar sitio** (o el sitio ya creado con tu
-   dominio) → busca la opción **Node.js** / "Configurar app de Node.js".
-3. Conecta el repositorio de GitHub (Hostinger permite desplegar por Git) o
-   sube el código por SFTP/Git manualmente.
-4. Configura:
-   - Comando de instalación: `npm install`
-   - Comando de build: `npm run build`
-   - Comando de arranque: `npm run start`
-   - Variables de entorno: las mismas de tu `.env.local` (`ADMIN_SESSION_SECRET`,
-     `ADMIN_PASSWORD_HASH`, `MERCADOPAGO_ACCESS_TOKEN`, etc.) — cárgalas en la
-     sección de variables de entorno del panel de Node.js, no subas el
-     archivo `.env.local` al repositorio.
-5. Haz respaldos periódicos del archivo `data/vibra-sagrada.db` (contiene tus
-   productos y pedidos) — por ejemplo descargándolo por SFTP cada cierto
-   tiempo, o migrando a una base de datos administrada más adelante.
-
-### Opción B — Vercel + tu dominio de Hostinger (si tu plan de Hostinger no soporta Node.js)
-
-Vercel es la plataforma que mantiene Next.js y el despliegue es prácticamente
-automático conectando el repo de GitHub. La única salvedad importante:
-
-> **Vercel ejecuta el sitio en funciones "serverless" con almacenamiento
-> temporal.** Eso significa que si alguien agrega un producto desde `/admin`
-> en producción, ese cambio **no se guardará de forma confiable** con la base
-> SQLite actual. Para usar esta opción en producción hace falta migrar la
-> base de datos a un servicio como [Turso](https://turso.tech) (SQLite en la
-> nube, cambio de código mínimo) o Postgres (Supabase/Neon). Es un paso
-> siguiente natural, pero no está incluido en este esqueleto.
-
-Pasos generales si de todas formas quieres usar esta opción para probar el
-diseño/landing mientras se resuelve la base de datos:
-
-1. Sube el código a GitHub.
-2. Importa el repositorio en [vercel.com](https://vercel.com).
-3. Agrega las variables de entorno en la configuración del proyecto en Vercel.
-4. En Hostinger, ve a **DNS / Nameservers** de tu dominio y agrega los
-   registros que Vercel te indique (normalmente un registro `A` apuntando a
-   `76.76.21.21` y un `CNAME` para `www`).
-
-## 5. Estructura del proyecto
+## 6. Estructura del proyecto
 
 ```
 src/
@@ -205,15 +225,17 @@ src/
     admin/              → panel de administración (layout propio, sin header de tienda)
     api/                → rutas de backend (productos, checkout, login/logout)
   components/           → componentes de UI (carrito, formularios, nav de admin)
-  lib/                  → acceso a datos (SQLite), auth, Mercado Pago, tipos
+  lib/                  → acceso a datos (Turso/libSQL), auth, Mercado Pago, tipos
 scripts/
   seed.mjs               → productos de ejemplo
   hash-password.mjs      → genera el hash de la contraseña de admin
 data/
-  vibra-sagrada.db        → la base de datos (se crea sola al arrancar)
+  vibra-sagrada.db        → base de datos local para desarrollo (se crea sola,
+                             no se usa en producción si TURSO_DATABASE_URL
+                             está configurada)
 ```
 
-## 6. Próximos pasos sugeridos
+## 7. Próximos pasos sugeridos
 
 1. Copy real de la landing (historia de marca, propuesta de valor) — la
    identidad visual ya está aplicada, falta el contenido definitivo.
@@ -222,5 +244,5 @@ data/
 3. Conectar el `MERCADOPAGO_ACCESS_TOKEN` real y probar el flujo de pago de
    punta a punta, incluyendo el webhook de confirmación (necesita una URL
    pública — ver sección "Pagos").
-4. Elegir y ejecutar el camino de despliegue (Opción A o B arriba), según el
-   plan de Hostinger que tengas.
+4. Crear la base de datos en Turso y desplegar siguiendo la sección
+   "Desplegar en tu dominio de Hostinger".

@@ -11,7 +11,7 @@ export default async function AdminDashboardPage() {
     redirect("/admin/login");
   }
 
-  const products = getAllProducts();
+  const products = await getAllProducts();
 
   return (
     <div>

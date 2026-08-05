@@ -1,14 +1,20 @@
 // Seed script: adds sample products so the store isn't empty on first run.
 // Run with: npm run seed
-import Database from "better-sqlite3";
+import { createClient } from "@libsql/client";
 import path from "path";
 import fs from "fs";
 
 const dataDir = path.join(process.cwd(), "data");
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-const db = new Database(path.join(dataDir, "vibra-sagrada.db"));
 
-db.exec(`
+// Same fallback as src/lib/db.ts: uses Turso if TURSO_DATABASE_URL is set,
+// otherwise a local file so this works out of the box in development.
+const url =
+  process.env.TURSO_DATABASE_URL || `file:${path.join(dataDir, "vibra-sagrada.db")}`;
+const authToken = process.env.TURSO_AUTH_TOKEN;
+const db = createClient({ url, authToken });
+
+await db.executeMultiple(`
   CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     slug TEXT UNIQUE NOT NULL,
@@ -25,9 +31,11 @@ db.exec(`
   );
 `);
 
-const existing = db.prepare("SELECT COUNT(*) as c FROM products").get();
-if (existing.c > 0) {
-  console.log(`Ya hay ${existing.c} producto(s) en la base de datos. No se agregó nada nuevo.`);
+const existing = await db.execute("SELECT COUNT(*) as c FROM products");
+if (Number(existing.rows[0].c) > 0) {
+  console.log(
+    `Ya hay ${existing.rows[0].c} producto(s) en la base de datos. No se agregó nada nuevo.`
+  );
   process.exit(0);
 }
 
@@ -124,16 +132,19 @@ const sampleProducts = [
   },
 ];
 
-const insert = db.prepare(`
+const insertSql = `
   INSERT INTO products (slug, name, description, priceCents, currency, images, personalizationFields, stock, active, updatedAt)
   VALUES (@slug, @name, @description, @priceCents, @currency, @images, @personalizationFields, @stock, @active, datetime('now'))
-`);
+`;
 
 for (const p of sampleProducts) {
-  insert.run({
-    ...p,
-    images: JSON.stringify(p.images),
-    personalizationFields: JSON.stringify(p.personalizationFields),
+  await db.execute({
+    sql: insertSql,
+    args: {
+      ...p,
+      images: JSON.stringify(p.images),
+      personalizationFields: JSON.stringify(p.personalizationFields),
+    },
   });
 }
 
