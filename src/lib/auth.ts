@@ -16,12 +16,19 @@ function getSecret(): Uint8Array {
 }
 
 export async function verifyAdminPassword(password: string): Promise<boolean> {
-  const hash = process.env.ADMIN_PASSWORD_HASH;
-  if (!hash) {
+  const rawHash = process.env.ADMIN_PASSWORD_HASH;
+  if (!rawHash) {
     throw new Error(
       "Falta ADMIN_PASSWORD_HASH en el archivo .env.local. Genera uno con: npm run hash-password -- \"tu-contraseña\""
     );
   }
+  // Defensivo: algunos paneles de hosting han guardado este valor con los
+  // "$" escapados literalmente como "\$" (la forma pensada para archivos
+  // .env, no para variables de entorno pegadas directo en un panel web).
+  // Un hash de bcrypt real nunca contiene una barra invertida, así que
+  // quitar "\$" -> "$" siempre es seguro y no cambia nada si el valor ya
+  // estaba correcto.
+  const hash = rawHash.replace(/\\\$/g, "$");
   return bcrypt.compare(password, hash);
 }
 

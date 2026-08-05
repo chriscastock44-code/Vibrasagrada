@@ -35,6 +35,14 @@ export async function GET(request: NextRequest) {
     compareResult = `error al comparar: ${err instanceof Error ? err.message : String(err)}`;
   }
 
+  const sanitizedHash = hash.replace(/\\\$/g, "$");
+  let sanitizedCompareResult: boolean | string;
+  try {
+    sanitizedCompareResult = await bcrypt.compare(testPassword, sanitizedHash);
+  } catch (err) {
+    sanitizedCompareResult = `error al comparar: ${err instanceof Error ? err.message : String(err)}`;
+  }
+
   return NextResponse.json({
     hashPresent: true,
     hashLength: hash.length,
@@ -48,6 +56,7 @@ export async function GET(request: NextRequest) {
     containsQuotes: hash.includes('"') || hash.includes("'"),
     testedPassword: testPassword,
     matches: compareResult,
+    matchesAfterSanitize: sanitizedCompareResult,
     // Diagnostic info to tell "process never restarted" apart from
     // "restarted but the stored value is still wrong":
     serverUptimeSeconds: Math.round(process.uptime()),
