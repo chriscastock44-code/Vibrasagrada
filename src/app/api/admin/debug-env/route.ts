@@ -48,5 +48,11 @@ export async function GET(request: NextRequest) {
     containsQuotes: hash.includes('"') || hash.includes("'"),
     testedPassword: testPassword,
     matches: compareResult,
+    // Diagnostic info to tell "process never restarted" apart from
+    // "restarted but the stored value is still wrong":
+    serverUptimeSeconds: Math.round(process.uptime()),
+    serverPid: process.pid,
+    serverBootedAt: new Date(Date.now() - process.uptime() * 1000).toISOString(),
+    buildMarker: "debug-v2",
   });
 }
