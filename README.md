@@ -4,22 +4,23 @@ Landing page y tienda online bajo el mismo dominio, con panel de administración
 para cargar productos, precios y opciones de personalización. Construido con
 Next.js (App Router), TypeScript, Tailwind CSS y SQLite (`better-sqlite3`).
 
-Este es el **esqueleto funcional**: la estructura, el backend, la tienda, el
-carrito, el checkout y el panel de admin ya funcionan de punta a punta. Lo que
-falta es la dirección de diseño real (colores, tipografía, fotos, copy de
-marca) y conectar las llaves reales de pago.
+La estructura, el backend, la tienda, el carrito, el checkout y el panel de
+admin funcionan de punta a punta, y ya tiene aplicada la identidad visual de
+marca (logo, colores, tipografía y estilo "pop art" del brandbook). Falta
+conectar las llaves reales de pago y definir el copy final de contenido.
 
 ## Qué incluye
 
-- **Landing (`/`)** — hero, historia de marca y productos destacados. Todo el
-  contenido está marcado con `TODO` donde debe ir el copy/diseño definitivo.
+- **Landing (`/`)** — hero, historia de marca y productos destacados, con la
+  identidad visual de Vibra Sagrada ya aplicada.
 - **Tienda (`/tienda`)** — catálogo, ficha de producto con formulario de
   personalización dinámico (texto, selección, área de texto, subida de
   imagen), carrito y checkout.
 - **Panel de administración (`/admin`)** — login con contraseña, alta/edición/
   baja de productos, precio, stock, imágenes y campos de personalización.
-- **Pagos** — integración con Stripe Checkout (modo prueba mientras no haya
-  llaves reales; con una nota clara en pantalla si falta configurar).
+- **Pagos** — integración con Mercado Pago Checkout Pro (modo prueba mientras
+  no haya credenciales reales; con una nota clara en pantalla si falta
+  configurar).
 - **Base de datos** — SQLite local (`data/vibra-sagrada.db`), sin
   dependencias externas ni servicios de pago de por medio para desarrollar.
 
@@ -58,10 +59,10 @@ cp .env.example .env.local
   de archivos `.env` como referencia a otra variable, así que el script ya te
   entrega el valor con los `$` escapados (`\$`). Cópialo tal cual te lo dé,
   no lo modifiques.
-- `STRIPE_SECRET_KEY` / `STRIPE_PUBLISHABLE_KEY`: opcionales por ahora. Sin
-  ellas, el checkout muestra un aviso de "pasarela no configurada" en vez de
-  fallar, y en desarrollo puedes simular un pedido de prueba para probar el
-  flujo completo (carrito → checkout → gracias).
+- `MERCADOPAGO_ACCESS_TOKEN`: opcional por ahora. Sin ella, el checkout
+  muestra un aviso de "pasarela no configurada" en vez de fallar, y en
+  desarrollo puedes simular un pedido de prueba para probar el flujo completo
+  (carrito → checkout → gracias).
 
 Ya dejé un `.env.local` con una contraseña de prueba (`vibra2026`) generada
 automáticamente para que puedas probar el panel de admin de inmediato.
@@ -111,25 +112,33 @@ puedes:
 
 ## 3. Pagos
 
-El checkout usa [Stripe Checkout](https://stripe.com/docs/checkout/quickstart).
-Para activarlo:
+El checkout usa [Mercado Pago Checkout Pro](https://www.mercadopago.com.mx/developers/es/docs/checkout-pro/landing):
+el cliente paga en una página alojada por Mercado Pago (tarjeta, transferencia,
+efectivo en tiendas, saldo de Mercado Pago, etc.) y regresa al sitio al
+terminar. Para activarlo:
 
-1. Crea una cuenta en Stripe (disponible en México).
-2. Copia tus llaves de **modo prueba** desde
-   `https://dashboard.stripe.com/test/apikeys` y ponlas en `.env.local`.
-3. Prueba una compra completa con una [tarjeta de prueba](https://stripe.com/docs/testing)
-   (`4242 4242 4242 4242`, cualquier fecha futura y CVC).
-4. Cuando todo funcione, repite el proceso con tus llaves de **modo real** en
-   el servidor de producción.
+1. Entra a tu [panel de desarrolladores de Mercado Pago](https://www.mercadopago.com.mx/developers/panel/app)
+   y crea una aplicación (o usa la que se genera por defecto con tu cuenta).
+2. En la sección **Credenciales de prueba**, copia el **Access Token** y
+   ponlo en `.env.local` como `MERCADOPAGO_ACCESS_TOKEN`.
+3. Prueba una compra completa usando una
+   [cuenta de prueba compradora](https://www.mercadopago.com.mx/developers/es/docs/checkout-pro/additional-content/test-cards)
+   y una tarjeta de prueba.
+4. Cuando todo funcione, repite el proceso con el **Access Token de
+   producción** (mismo panel, sección "Credenciales de producción") en el
+   servidor donde despliegues el sitio.
 
-Si más adelante prefieres Mercado Pago (muy usado en México/LatAm) en vez de
-o junto con Stripe, la integración vive en un solo archivo
-(`src/app/api/checkout/route.ts`) y es un cambio acotado.
-
-**Pendiente para producción:** agregar un webhook de Stripe que marque el
-pedido como pagado en la base de datos (`src/lib/orders.ts` ya tiene
-`markOrderPaid`, falta la ruta `/api/webhooks/stripe` que la invoque). Hoy el
-pedido queda registrado como "pending" apenas se crea la sesión de pago.
+**Confirmación de pago (webhook):** ya está implementada en
+`src/app/api/mercadopago/webhook/route.ts`. Cada preferencia de pago se crea
+con `notification_url` apuntando a esa ruta; Mercado Pago la llama cuando el
+pago cambia de estado, la ruta consulta el pago real por su id (nunca confía
+en datos que lleguen sin verificar) y, si está `approved`, marca el pedido
+como pagado en la base de datos usando el `external_reference` (el id interno
+del pedido) para ubicarlo. **Importante:** esto solo funciona con una URL
+pública — en `localhost` Mercado Pago no puede llamarte de vuelta, así que la
+confirmación automática solo se puede probar de verdad ya desplegado (o con
+un túnel como [ngrok](https://ngrok.com) apuntando a tu `localhost:3000`
+mientras desarrollas).
 
 ## 4. Desplegar en tu dominio de Hostinger
 
@@ -155,9 +164,9 @@ base de datos SQLite funciona tal cual porque el servidor es persistente
    - Comando de build: `npm run build`
    - Comando de arranque: `npm run start`
    - Variables de entorno: las mismas de tu `.env.local` (`ADMIN_SESSION_SECRET`,
-     `ADMIN_PASSWORD_HASH`, `STRIPE_SECRET_KEY`, etc.) — cárgalas en la sección
-     de variables de entorno del panel de Node.js, no subas el archivo
-     `.env.local` al repositorio.
+     `ADMIN_PASSWORD_HASH`, `MERCADOPAGO_ACCESS_TOKEN`, etc.) — cárgalas en la
+     sección de variables de entorno del panel de Node.js, no subas el
+     archivo `.env.local` al repositorio.
 5. Haz respaldos periódicos del archivo `data/vibra-sagrada.db` (contiene tus
    productos y pedidos) — por ejemplo descargándolo por SFTP cada cierto
    tiempo, o migrando a una base de datos administrada más adelante.
@@ -196,7 +205,7 @@ src/
     admin/              → panel de administración (layout propio, sin header de tienda)
     api/                → rutas de backend (productos, checkout, login/logout)
   components/           → componentes de UI (carrito, formularios, nav de admin)
-  lib/                  → acceso a datos (SQLite), auth, Stripe, tipos
+  lib/                  → acceso a datos (SQLite), auth, Mercado Pago, tipos
 scripts/
   seed.mjs               → productos de ejemplo
   hash-password.mjs      → genera el hash de la contraseña de admin
@@ -206,12 +215,12 @@ data/
 
 ## 6. Próximos pasos sugeridos
 
-1. **Dirección de diseño**: colores, tipografía, logo y fotografía reales de
-   marca (todo el HTML/Tailwind actual es un esqueleto neutro, listo para
-   restylear).
-2. Copy real de la landing (historia de marca, propuesta de valor).
-3. Subida de imágenes de producto directamente desde el admin (en vez de por
+1. Copy real de la landing (historia de marca, propuesta de valor) — la
+   identidad visual ya está aplicada, falta el contenido definitivo.
+2. Subida de imágenes de producto directamente desde el admin (en vez de por
    URL).
-4. Webhook de Stripe para marcar pedidos como pagados automáticamente.
-5. Decidir la pasarela de pago definitiva (Stripe, Mercado Pago, o ambas).
-6. Elegir y ejecutar el camino de despliegue (Opción A o B arriba).
+3. Conectar el `MERCADOPAGO_ACCESS_TOKEN` real y probar el flujo de pago de
+   punta a punta, incluyendo el webhook de confirmación (necesita una URL
+   pública — ver sección "Pagos").
+4. Elegir y ejecutar el camino de despliegue (Opción A o B arriba), según el
+   plan de Hostinger que tengas.

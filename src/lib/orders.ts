@@ -23,10 +23,19 @@ export function createOrder(input: OrderInput): number {
   return Number(result.lastInsertRowid);
 }
 
-export function setOrderStripeSession(orderId: number, sessionId: string): void {
-  db.prepare("UPDATE orders SET stripeSessionId = ? WHERE id = ?").run(sessionId, orderId);
+export function setOrderPreferenceId(orderId: number, preferenceId: string): void {
+  db.prepare("UPDATE orders SET mpPreferenceId = ? WHERE id = ?").run(preferenceId, orderId);
 }
 
-export function markOrderPaid(sessionId: string): void {
-  db.prepare("UPDATE orders SET status = 'paid' WHERE stripeSessionId = ?").run(sessionId);
+/**
+ * Marks an order as paid once Mercado Pago confirms an "approved" payment
+ * via webhook. `orderId` comes from the payment's `external_reference`,
+ * which we set to our internal order id when creating the preference —
+ * that's the trustworthy link back to our order, not the preference id.
+ */
+export function markOrderPaid(orderId: string | number, paymentId: string): void {
+  db.prepare("UPDATE orders SET status = 'paid', mpPaymentId = ? WHERE id = ?").run(
+    paymentId,
+    Number(orderId)
+  );
 }

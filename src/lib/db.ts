@@ -45,7 +45,8 @@ db.exec(`
     totalCents INTEGER NOT NULL,
     currency TEXT NOT NULL DEFAULT 'MXN',
     status TEXT NOT NULL DEFAULT 'pending',
-    stripeSessionId TEXT,
+    mpPreferenceId TEXT,
+    mpPaymentId TEXT,
     createdAt TEXT NOT NULL DEFAULT (datetime('now'))
   );
 `);

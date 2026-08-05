@@ -90,7 +90,7 @@ export default function CheckoutPage() {
           disabled={loading}
           className="btn-pop btn-pop-primary w-full py-3 text-sm disabled:opacity-50"
         >
-          {loading ? "Redirigiendo…" : "Pagar con tarjeta"}
+          {loading ? "Redirigiendo…" : "Pagar con Mercado Pago"}
         </button>
       </form>
 
@@ -100,9 +100,9 @@ export default function CheckoutPage() {
             La pasarela de pago aún no está configurada.
           </p>
           <p className="mt-2">
-            Agrega tu clave de Stripe (<code>STRIPE_SECRET_KEY</code>) en{" "}
-            <code>.env.local</code> para aceptar pagos reales. Ver el README para
-            instrucciones.
+            Agrega tu access token de Mercado Pago (
+            <code>MERCADOPAGO_ACCESS_TOKEN</code>) en <code>.env.local</code>{" "}
+            para aceptar pagos reales. Ver el README para instrucciones.
           </p>
           {process.env.NODE_ENV !== "production" && (
             <button onClick={handleTestOrder} className="btn-pop btn-pop-outline mt-4 px-4 py-2 text-xs">

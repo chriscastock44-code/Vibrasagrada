@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getStripe } from "@/lib/stripe";
+import { getPreferenceClient } from "@/lib/mercadopago";
 import { getProductById } from "@/lib/products";
-import { createOrder, setOrderStripeSession } from "@/lib/orders";
+import { createOrder, setOrderPreferenceId } from "@/lib/orders";
 import type { CartItem } from "@/lib/types";
 
 export async function POST(request: NextRequest) {
@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
     currency,
   });
 
-  const stripe = getStripe();
-  if (!stripe) {
+  const preferenceClient = getPreferenceClient();
+  if (!preferenceClient) {
     // Payment gateway not configured yet — let the frontend show setup
     // instructions instead of a hard failure.
     return NextResponse.json(
@@ -48,33 +48,47 @@ export async function POST(request: NextRequest) {
   }
 
   const origin = request.nextUrl.origin;
+  const isHttps = origin.startsWith("https://");
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    customer_email: customerEmail || undefined,
-    line_items: items.map((item) => {
-      const product = getProductById(item.productId)!;
-      const personalizationSummary = Object.entries(item.personalization || {})
-        .map(([k, v]) => `${k}: ${v.startsWith("data:") ? "(archivo adjunto)" : v}`)
-        .join(" · ");
-      return {
-        quantity: item.quantity,
-        price_data: {
-          currency: product.currency.toLowerCase(),
-          unit_amount: product.priceCents,
-          product_data: {
-            name: product.name,
+  try {
+    const preference = await preferenceClient.create({
+      body: {
+        items: items.map((item) => {
+          const product = getProductById(item.productId)!;
+          const personalizationSummary = Object.entries(item.personalization || {})
+            .map(([k, v]) => `${k}: ${v.startsWith("data:") ? "(archivo adjunto)" : v}`)
+            .join(" · ");
+          return {
+            id: String(product.id),
+            title: product.name,
             description: personalizationSummary || undefined,
-          },
+            quantity: item.quantity,
+            currency_id: product.currency,
+            unit_price: product.priceCents / 100,
+          };
+        }),
+        payer: customerEmail ? { email: customerEmail } : undefined,
+        external_reference: String(orderId),
+        back_urls: {
+          success: `${origin}/tienda/checkout/gracias`,
+          pending: `${origin}/tienda/checkout`,
+          failure: `${origin}/tienda/checkout`,
         },
-      };
-    }),
-    success_url: `${origin}/tienda/checkout/gracias`,
-    cancel_url: `${origin}/tienda/checkout`,
-    metadata: { orderId: String(orderId) },
-  });
+        // auto_return only works with https back_urls — Mercado Pago
+        // rejects the preference otherwise, which matters for local dev.
+        ...(isHttps ? { auto_return: "approved" as const } : {}),
+        notification_url: `${origin}/api/mercadopago/webhook`,
+      },
+    });
 
-  setOrderStripeSession(orderId, session.id);
+    setOrderPreferenceId(orderId, preference.id!);
 
-  return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: preference.init_point });
+  } catch (err) {
+    console.error("Error al crear la preferencia de Mercado Pago:", err);
+    return NextResponse.json(
+      { error: "No se pudo iniciar el pago con Mercado Pago." },
+      { status: 502 }
+    );
+  }
 }
