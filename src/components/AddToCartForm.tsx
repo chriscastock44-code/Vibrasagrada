@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { useCart } from "./CartContext";
 import type { Product } from "@/lib/types";
 
+const inputClass =
+  "w-full rounded-lg border-2 border-brand-black px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow";
+
 export default function AddToCartForm({ product }: { product: Product }) {
   const { addItem } = useCart();
   const router = useRouter();
@@ -57,7 +60,7 @@ export default function AddToCartForm({ product }: { product: Product }) {
     <form onSubmit={handleSubmit} className="space-y-6">
       {product.personalizationFields.map((field) => (
         <div key={field.id}>
-          <label className="mb-1 block text-sm font-medium">
+          <label className="mb-1 block font-body text-sm font-semibold">
             {field.label}
             {field.required ? " *" : ""}
           </label>
@@ -69,7 +72,7 @@ export default function AddToCartForm({ product }: { product: Product }) {
               required={field.required}
               value={values[field.id] || ""}
               onChange={(e) => setValue(field.id, e.target.value)}
-              className="w-full rounded border border-black/15 px-3 py-2 text-sm"
+              className={inputClass}
             />
           )}
 
@@ -78,7 +81,7 @@ export default function AddToCartForm({ product }: { product: Product }) {
               required={field.required}
               value={values[field.id] || ""}
               onChange={(e) => setValue(field.id, e.target.value)}
-              className="w-full rounded border border-black/15 px-3 py-2 text-sm"
+              className={inputClass}
               rows={3}
             />
           )}
@@ -88,7 +91,7 @@ export default function AddToCartForm({ product }: { product: Product }) {
               required={field.required}
               value={values[field.id] || ""}
               onChange={(e) => setValue(field.id, e.target.value)}
-              className="w-full rounded border border-black/15 px-3 py-2 text-sm"
+              className={inputClass}
             >
               <option value="">Selecciona una opción</option>
               {(field.options || []).map((opt) => (
@@ -110,19 +113,19 @@ export default function AddToCartForm({ product }: { product: Product }) {
           )}
 
           {field.helpText && (
-            <p className="mt-1 text-xs text-black/50">{field.helpText}</p>
+            <p className="mt-1 font-body text-xs text-black/50">{field.helpText}</p>
           )}
         </div>
       ))}
 
       <div>
-        <label className="mb-1 block text-sm font-medium">Cantidad</label>
+        <label className="mb-1 block font-body text-sm font-semibold">Cantidad</label>
         <input
           type="number"
           min={1}
           value={quantity}
           onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))}
-          className="w-24 rounded border border-black/15 px-3 py-2 text-sm"
+          className={`${inputClass} w-24`}
         />
       </div>
 
@@ -135,23 +138,20 @@ export default function AddToCartForm({ product }: { product: Product }) {
           <button
             type="button"
             onClick={() => router.push("/tienda/carrito")}
-            className="rounded-full bg-black px-6 py-3 text-sm text-white hover:opacity-80"
+            className="btn-pop btn-pop-primary px-6 py-3 text-sm"
           >
             Ir al carrito
           </button>
           <button
             type="button"
             onClick={() => setAdded(false)}
-            className="rounded-full border border-black/20 px-6 py-3 text-sm hover:bg-black/5"
+            className="btn-pop btn-pop-outline px-6 py-3 text-sm"
           >
             Agregar otro
           </button>
         </div>
       ) : (
-        <button
-          type="submit"
-          className="rounded-full bg-black px-8 py-3 text-sm text-white hover:opacity-80"
-        >
+        <button type="submit" className="btn-pop btn-pop-primary px-8 py-3 text-sm">
           Agregar al carrito
         </button>
       )}

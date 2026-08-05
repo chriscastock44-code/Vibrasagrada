@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function AdminNav() {
@@ -13,19 +14,28 @@ export default function AdminNav() {
   }
 
   return (
-    <header className="border-b border-black/10">
+    <header className="border-b-2 border-brand-black bg-white">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-        <Link href="/admin" className="font-semibold tracking-wide">
-          Vibra Sagrada · Admin
+        <Link href="/admin" className="flex items-center gap-2">
+          <Image
+            src="/brand/icon.png"
+            alt=""
+            width={32}
+            height={22}
+            className="h-6 w-auto"
+          />
+          <span className="font-heading font-extrabold tracking-tight">
+            vibra sagrada · admin
+          </span>
         </Link>
-        <nav className="flex items-center gap-6 text-sm">
-          <Link href="/admin/productos/nuevo" className="hover:opacity-70">
+        <nav className="flex items-center gap-6 font-body text-sm font-medium">
+          <Link href="/admin/productos/nuevo" className="hover:text-brand-navy">
             + Nuevo producto
           </Link>
-          <Link href="/tienda" target="_blank" className="hover:opacity-70">
+          <Link href="/tienda" target="_blank" className="hover:text-brand-navy">
             Ver tienda ↗
           </Link>
-          <button onClick={handleLogout} className="hover:opacity-70">
+          <button onClick={handleLogout} className="hover:text-brand-pink">
             Cerrar sesión
           </button>
         </nav>

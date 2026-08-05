@@ -53,17 +53,17 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-xl px-6 py-24 text-center">
-        <h1 className="text-2xl font-semibold">No hay productos en tu carrito</h1>
+        <h1 className="text-2xl font-extrabold">No hay productos en tu carrito</h1>
       </div>
     );
   }
 
   return (
     <div className="mx-auto max-w-xl px-6 py-16">
-      <h1 className="text-3xl font-semibold">Finalizar compra</h1>
+      <h1 className="text-3xl font-extrabold">Finalizar compra</h1>
 
-      <div className="mt-8 rounded-lg border border-black/10 p-4 text-sm">
-        <div className="flex justify-between font-medium">
+      <div className="card-pop mt-8 p-4 font-body text-sm">
+        <div className="flex justify-between font-heading font-bold">
           <span>Total</span>
           <span>{formatPrice(totalCents, items[0]?.currency || "MXN")}</span>
         </div>
@@ -71,13 +71,15 @@ export default function CheckoutPage() {
 
       <form onSubmit={handleCheckout} className="mt-8 space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium">Correo electrónico</label>
+          <label className="mb-1 block font-body text-sm font-semibold">
+            Correo electrónico
+          </label>
           <input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded border border-black/15 px-3 py-2 text-sm"
+            className="w-full rounded-lg border-2 border-brand-black px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
           />
         </div>
 
@@ -86,25 +88,24 @@ export default function CheckoutPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-full bg-black px-8 py-3 text-sm text-white hover:opacity-80 disabled:opacity-50"
+          className="btn-pop btn-pop-primary w-full py-3 text-sm disabled:opacity-50"
         >
           {loading ? "Redirigiendo…" : "Pagar con tarjeta"}
         </button>
       </form>
 
       {notConfigured && (
-        <div className="mt-8 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          <p className="font-medium">La pasarela de pago aún no está configurada.</p>
+        <div className="mt-8 rounded-2xl border-2 border-brand-black bg-brand-yellow/30 p-4 font-body text-sm">
+          <p className="font-heading font-bold">
+            La pasarela de pago aún no está configurada.
+          </p>
           <p className="mt-2">
             Agrega tu clave de Stripe (<code>STRIPE_SECRET_KEY</code>) en{" "}
             <code>.env.local</code> para aceptar pagos reales. Ver el README para
             instrucciones.
           </p>
           {process.env.NODE_ENV !== "production" && (
-            <button
-              onClick={handleTestOrder}
-              className="mt-4 rounded-full border border-amber-400 px-4 py-2 text-xs hover:bg-amber-100"
-            >
+            <button onClick={handleTestOrder} className="btn-pop btn-pop-outline mt-4 px-4 py-2 text-xs">
               Simular pedido de prueba (solo desarrollo)
             </button>
           )}

@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import "@fontsource/baloo-2/600.css";
+import "@fontsource/baloo-2/700.css";
+import "@fontsource/baloo-2/800.css";
+import "@fontsource/poppins/400.css";
+import "@fontsource/poppins/500.css";
+import "@fontsource/poppins/600.css";
+import "@fontsource/poppins/700.css";
 import "../globals.css";
 import { CartProvider } from "@/components/CartContext";
 import Header from "@/components/Header";

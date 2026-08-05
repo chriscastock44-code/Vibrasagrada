@@ -1,26 +1,123 @@
 @import "tailwindcss";
 
+/* Las fuentes de marca (Fontsource) se importan en JS desde los layouts
+   raíz — (site)/layout.tsx y admin/layout.tsx — no aquí, porque un
+   @import CSS con especificador de paquete no siempre resuelve a través
+   del empaquetador. */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Paleta Vibra Sagrada — ver brandbook, sección "Paleta de color" */
+  --background: #faf4e8; /* Crudo */
+  --foreground: #000000; /* Negro */
+
+  --brand-yellow: #ffd200; /* Amarillo Vibra — color principal */
+  --brand-blue: #00a7df; /* Azul Cielo */
+  --brand-pink: #ec69ad; /* Rosa Vibra */
+  --brand-navy: #2e4c84; /* Azul Marino */
+  --brand-black: #000000;
+  --brand-cream: #faf4e8; /* Crudo */
+
+  --font-heading: "Baloo 2", system-ui, sans-serif;
+  --font-body: "Poppins", system-ui, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-brand-yellow: var(--brand-yellow);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-pink: var(--brand-pink);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-black: var(--brand-black);
+  --color-brand-cream: var(--brand-cream);
+
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
+}
+
+/* ---- Componentes de marca reutilizables ----
+   Estilo "pop": contorno negro grueso, esquinas redondeadas, sombra dura
+   desplazada — hace eco del trazo del ícono del ojo en el logotipo. */
+
+@layer components {
+  .btn-pop {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    border-width: 2px;
+    border-color: var(--brand-black);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    box-shadow: 3px 3px 0 var(--brand-black);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn-pop:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 var(--brand-black);
+  }
+  .btn-pop:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 var(--brand-black);
+  }
+
+  .btn-pop-primary {
+    background: var(--brand-yellow);
+    color: var(--brand-black);
+  }
+  .btn-pop-outline {
+    background: transparent;
+    color: var(--brand-black);
+  }
+
+  .card-pop {
+    border-width: 2px;
+    border-color: var(--brand-black);
+    border-radius: 1rem;
+    background: #ffffff;
+    box-shadow: 4px 4px 0 var(--brand-black);
+  }
+
+  .tag-pop {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    border-width: 2px;
+    border-color: var(--brand-black);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.65rem;
+  }
+
+  .pattern-lunar {
+    background-color: var(--brand-blue);
+    background-image: radial-gradient(var(--brand-yellow) 22%, transparent 23%);
+    background-size: 22px 22px;
+  }
+
+  .pattern-raya {
+    background-color: var(--brand-navy);
+    background-image: repeating-linear-gradient(
+      45deg,
+      var(--brand-pink) 0px,
+      var(--brand-pink) 10px,
+      var(--brand-navy) 10px,
+      var(--brand-navy) 20px
+    );
+  }
 }

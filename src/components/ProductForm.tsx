@@ -6,19 +6,19 @@ import type { Product, PersonalizationField } from "@/lib/types";
 
 const EXAMPLE_FIELDS: PersonalizationField[] = [
   {
-    id: "texto_grabado",
+    id: "texto_estampado",
     type: "text",
-    label: "Texto a grabar",
+    label: "Texto o nombre a estampar",
     required: true,
     maxLength: 25,
     helpText: "Máximo 25 caracteres.",
   },
   {
-    id: "color",
+    id: "color_prenda",
     type: "select",
-    label: "Color",
+    label: "Color de la prenda",
     required: true,
-    options: ["Dorado", "Plateado"],
+    options: ["Crudo", "Negro", "Azul marino"],
   },
 ];
 
@@ -112,18 +112,18 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="mb-1 block text-sm font-medium">Nombre</label>
+        <label className="mb-1 block font-body text-sm font-semibold">Nombre</label>
         <input
           type="text"
           required
           value={name}
           onChange={(e) => handleNameChange(e.target.value)}
-          className="w-full rounded border border-black/15 bg-white px-3 py-2 text-sm"
+          className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium">
+        <label className="mb-1 block font-body text-sm font-semibold">
           URL (slug) — se usa en /tienda/{slug || "..."}
         </label>
         <input
@@ -134,23 +134,23 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
             setSlugTouched(true);
             setSlug(slugify(e.target.value));
           }}
-          className="w-full rounded border border-black/15 bg-white px-3 py-2 text-sm"
+          className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium">Descripción</label>
+        <label className="mb-1 block font-body text-sm font-semibold">Descripción</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={4}
-          className="w-full rounded border border-black/15 bg-white px-3 py-2 text-sm"
+          className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
         />
       </div>
 
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className="mb-1 block text-sm font-medium">Precio</label>
+          <label className="mb-1 block font-body text-sm font-semibold">Precio</label>
           <input
             type="number"
             step="0.01"
@@ -158,34 +158,34 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
             required
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="w-full rounded border border-black/15 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
           />
         </div>
         <div className="w-32">
-          <label className="mb-1 block text-sm font-medium">Moneda</label>
+          <label className="mb-1 block font-body text-sm font-semibold">Moneda</label>
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
-            className="w-full rounded border border-black/15 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
           >
             <option value="MXN">MXN</option>
             <option value="USD">USD</option>
           </select>
         </div>
         <div className="w-32">
-          <label className="mb-1 block text-sm font-medium">Stock</label>
+          <label className="mb-1 block font-body text-sm font-semibold">Stock</label>
           <input
             type="number"
             min="0"
             value={stock}
             onChange={(e) => setStock(e.target.value)}
-            className="w-full rounded border border-black/15 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
           />
         </div>
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium">
+        <label className="mb-1 block font-body text-sm font-semibold">
           Imágenes (una URL por línea)
         </label>
         <textarea
@@ -193,31 +193,31 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
           onChange={(e) => setImages(e.target.value)}
           rows={3}
           placeholder="https://..."
-          className="w-full rounded border border-black/15 bg-white px-3 py-2 text-sm"
+          className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
         />
-        <p className="mt-1 text-xs text-black/50">
+        <p className="mt-1 font-body text-xs text-black/50">
           Por ahora las imágenes se referencian por URL. Más adelante podemos
           agregar subida directa de archivos.
         </p>
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium">
+        <label className="mb-1 block font-body text-sm font-semibold">
           Campos de personalización (JSON)
         </label>
         <textarea
           value={fieldsJson}
           onChange={(e) => setFieldsJson(e.target.value)}
           rows={10}
-          className="w-full rounded border border-black/15 bg-white px-3 py-2 font-mono text-xs"
+          className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-brand-yellow"
         />
-        <p className="mt-1 text-xs text-black/50">
+        <p className="mt-1 font-body text-xs text-black/50">
           Tipos disponibles: <code>text</code>, <code>textarea</code>,{" "}
           <code>select</code> (con <code>options</code>), <code>image</code>.
         </p>
       </div>
 
-      <label className="flex items-center gap-2 text-sm">
+      <label className="flex items-center gap-2 font-body text-sm">
         <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
         Publicado (visible en la tienda)
       </label>
@@ -227,7 +227,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
       <button
         type="submit"
         disabled={loading}
-        className="rounded-full bg-black px-8 py-3 text-sm text-white hover:opacity-80 disabled:opacity-50"
+        className="btn-pop btn-pop-primary px-8 py-3 text-sm disabled:opacity-50"
       >
         {loading ? "Guardando…" : isEdit ? "Guardar cambios" : "Crear producto"}
       </button>

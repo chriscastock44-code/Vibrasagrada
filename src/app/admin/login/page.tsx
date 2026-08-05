@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
@@ -38,19 +39,26 @@ export default function AdminLoginPage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-6">
-      <h1 className="text-xl font-semibold">Acceso administrador</h1>
-      <p className="mt-1 text-sm text-black/60">Vibra Sagrada</p>
+      <Image
+        src="/brand/icon.png"
+        alt=""
+        width={72}
+        height={50}
+        className="h-10 w-auto"
+      />
+      <h1 className="mt-4 font-heading text-xl font-extrabold">Acceso administrador</h1>
+      <p className="mt-1 font-body text-sm text-black/60">Vibra Sagrada</p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium">Contraseña</label>
+          <label className="mb-1 block font-body text-sm font-semibold">Contraseña</label>
           <input
             type="password"
             required
             autoFocus
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded border border-black/15 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
           />
         </div>
 
@@ -59,7 +67,7 @@ export default function AdminLoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-full bg-black px-6 py-3 text-sm text-white hover:opacity-80 disabled:opacity-50"
+          className="btn-pop btn-pop-primary w-full py-3 text-sm disabled:opacity-50"
         >
           {loading ? "Ingresando…" : "Ingresar"}
         </button>
