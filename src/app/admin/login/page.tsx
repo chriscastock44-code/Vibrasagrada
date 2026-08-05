@@ -42,9 +42,9 @@ export default function AdminLoginPage() {
       <Image
         src="/brand/icon.png"
         alt=""
-        width={72}
-        height={50}
-        className="h-10 w-auto"
+        width={400}
+        height={283}
+        className="h-10 w-auto self-start object-contain"
       />
       <h1 className="mt-4 font-heading text-xl font-extrabold">Acceso administrador</h1>
       <p className="mt-1 font-body text-sm text-black/60">Vibra Sagrada</p>
