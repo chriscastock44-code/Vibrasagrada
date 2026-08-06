@@ -22,16 +22,16 @@ export default async function ProductPage({
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-        <div className="card-pop aspect-square w-full overflow-hidden">
+        <div className="card-pop w-full self-start overflow-hidden">
           {product.images[0] ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={product.images[0]}
               alt={product.name}
-              className="h-full w-full rounded-[calc(1rem-2px)] object-contain"
+              className="h-auto w-full rounded-[calc(1rem-2px)]"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center rounded-[calc(1rem-2px)] bg-brand-cream text-xs text-black/30">
+            <div className="flex aspect-square w-full items-center justify-center rounded-[calc(1rem-2px)] bg-brand-cream text-xs text-black/30">
               Sin imagen
             </div>
           )}
