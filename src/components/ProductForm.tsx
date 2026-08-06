@@ -116,6 +116,11 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
     e.preventDefault();
     setError(null);
 
+    if (uploading) {
+      setError("Espera a que terminen de subirse las imágenes antes de guardar.");
+      return;
+    }
+
     let personalizationFields: PersonalizationField[];
     try {
       personalizationFields = JSON.parse(fieldsJson);
@@ -330,10 +335,16 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || uploading}
         className="btn-pop btn-pop-primary px-8 py-3 text-sm disabled:opacity-50"
       >
-        {loading ? "Guardando…" : isEdit ? "Guardar cambios" : "Crear producto"}
+        {loading
+          ? "Guardando…"
+          : uploading
+            ? "Esperando a que suban las imágenes…"
+            : isEdit
+              ? "Guardar cambios"
+              : "Crear producto"}
       </button>
     </form>
   );
