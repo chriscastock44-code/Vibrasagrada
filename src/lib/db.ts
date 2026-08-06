@@ -63,6 +63,14 @@ async function initSchema(): Promise<void> {
       mpPaymentId TEXT,
       createdAt TEXT NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS instagram_posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      imageUrl TEXT NOT NULL,
+      link TEXT NOT NULL DEFAULT '',
+      sortOrder INTEGER NOT NULL DEFAULT 0,
+      createdAt TEXT NOT NULL DEFAULT (datetime('now'))
+    );
   `);
 }
 

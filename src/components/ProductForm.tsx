@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Product, PersonalizationField } from "@/lib/types";
+import ImagesField from "./ImagesField";
 
 const EXAMPLE_FIELDS: PersonalizationField[] = [
   {
@@ -44,9 +45,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
   );
   const [currency, setCurrency] = useState(initialProduct?.currency || "MXN");
   const [images, setImages] = useState<string[]>(initialProduct?.images || []);
-  const [manualUrl, setManualUrl] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
   const [stock, setStock] = useState(initialProduct?.stock?.toString() || "0");
   const [active, setActive] = useState(initialProduct?.active ?? true);
   const [fieldsJson, setFieldsJson] = useState(
@@ -58,58 +57,6 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
   function handleNameChange(value: string) {
     setName(value);
     if (!slugTouched) setSlug(slugify(value));
-  }
-
-  async function handleFilesSelected(files: File[]) {
-    if (!files || files.length === 0) return;
-    setUploadError(null);
-    setUploading(true);
-
-    try {
-      const configRes = await fetch("/api/cloudinary-config");
-      const config: { cloudName: string | null; uploadPreset: string | null } =
-        await configRes.json();
-
-      if (!config.cloudName || !config.uploadPreset) {
-        setUploadError(
-          "La subida de imágenes no está configurada todavía (faltan las variables de Cloudinary)."
-        );
-        return;
-      }
-
-      const uploadedUrls: string[] = [];
-      for (const file of files) {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", config.uploadPreset);
-
-        const res = await fetch(
-          `https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`,
-          { method: "POST", body: formData }
-        );
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data?.error?.message || "No se pudo subir una de las imágenes.");
-        }
-        uploadedUrls.push(data.secure_url as string);
-      }
-      setImages((prev) => [...prev, ...uploadedUrls]);
-    } catch (err) {
-      setUploadError(err instanceof Error ? err.message : "No se pudo subir la imagen.");
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  function handleAddManualUrl() {
-    const url = manualUrl.trim();
-    if (!url) return;
-    setImages((prev) => [...prev, url]);
-    setManualUrl("");
-  }
-
-  function handleRemoveImage(index: number) {
-    setImages((prev) => prev.filter((_, i) => i !== index));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -246,74 +193,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
 
       <div>
         <label className="mb-1 block font-body text-sm font-semibold">Imágenes</label>
-
-        {images.length > 0 && (
-          <div className="mb-3 flex flex-wrap gap-3">
-            {images.map((url, index) => (
-              <div key={`${url}-${index}`} className="relative h-24 w-24">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={url}
-                  alt=""
-                  className="h-24 w-24 rounded-lg border-2 border-brand-black object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(index)}
-                  aria-label="Quitar imagen"
-                  className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-brand-black bg-white text-xs font-bold leading-none"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <label className="btn-pop inline-flex cursor-pointer px-4 py-2 text-sm">
-          {uploading ? "Subiendo…" : "+ Subir imagen"}
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            disabled={uploading}
-            onChange={(e) => {
-              // Importante: copiar a un arreglo normal ANTES de limpiar el
-              // campo. e.target.files es una lista "viva" ligada al input —
-              // si se limpia el input (e.target.value = "") antes de que
-              // termine de leerse, esa misma lista se vacía también,
-              // aunque ya se le haya pasado como argumento a otra función.
-              const selectedFiles = Array.from(e.target.files || []);
-              e.target.value = "";
-              handleFilesSelected(selectedFiles);
-            }}
-            className="hidden"
-          />
-        </label>
-
-        {uploadError && <p className="mt-2 text-sm text-red-600">{uploadError}</p>}
-
-        <div className="mt-3 flex gap-2">
-          <input
-            type="text"
-            value={manualUrl}
-            onChange={(e) => setManualUrl(e.target.value)}
-            placeholder="O pega una URL de imagen"
-            className="flex-1 rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
-          />
-          <button
-            type="button"
-            onClick={handleAddManualUrl}
-            className="rounded-lg border-2 border-brand-black bg-white px-4 py-2 text-sm font-semibold"
-          >
-            Agregar
-          </button>
-        </div>
-
-        <p className="mt-1 font-body text-xs text-black/50">
-          Sube una o varias fotos directamente, o pega una URL si ya tienes la
-          imagen en otro lugar.
-        </p>
+        <ImagesField images={images} onChange={setImages} onUploadingChange={setUploading} />
       </div>
 
       <div>

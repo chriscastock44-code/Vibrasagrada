@@ -37,6 +37,14 @@ export interface ProductInput {
   active: boolean;
 }
 
+export interface InstagramPost {
+  id: number;
+  imageUrl: string;
+  link: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface CartPersonalization {
   [fieldId: string]: string;
 }

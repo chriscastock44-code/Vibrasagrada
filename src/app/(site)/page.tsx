@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getAllProducts } from "@/lib/products";
+import { getAllInstagramPosts } from "@/lib/instagramPosts";
 import { formatPrice } from "@/lib/format";
 import ParallaxLayer from "@/components/ParallaxLayer";
+import InstagramFeedSection from "@/components/InstagramFeedSection";
 
 // Products are managed through /admin and can change at any time, so this
 // page must not be cached as static HTML at build time.
@@ -13,6 +15,7 @@ const VALUE_TAGS = ["Reutilizable", "Hecho a pedido", "Diseño autoral", "Durabl
 export default async function HomePage() {
   const allFeatured = await getAllProducts({ onlyActive: true });
   const featured = allFeatured.slice(0, 3);
+  const instagramPosts = await getAllInstagramPosts();
 
   return (
     <div>
@@ -153,6 +156,8 @@ export default async function HomePage() {
           </div>
         )}
       </section>
+
+      <InstagramFeedSection posts={instagramPosts} />
     </div>
   );
 }
