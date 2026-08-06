@@ -63,26 +63,28 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
   async function handleFilesSelected(files: FileList | null) {
     if (!files || files.length === 0) return;
     setUploadError(null);
-
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-    if (!cloudName || !uploadPreset) {
-      setUploadError(
-        "La subida de imágenes no está configurada todavía (faltan las variables de Cloudinary)."
-      );
-      return;
-    }
-
     setUploading(true);
+
     try {
+      const configRes = await fetch("/api/cloudinary-config");
+      const config: { cloudName: string | null; uploadPreset: string | null } =
+        await configRes.json();
+
+      if (!config.cloudName || !config.uploadPreset) {
+        setUploadError(
+          "La subida de imágenes no está configurada todavía (faltan las variables de Cloudinary)."
+        );
+        return;
+      }
+
       const uploadedUrls: string[] = [];
       for (const file of Array.from(files)) {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", uploadPreset);
+        formData.append("upload_preset", config.uploadPreset);
 
         const res = await fetch(
-          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          `https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`,
           { method: "POST", body: formData }
         );
         const data = await res.json();

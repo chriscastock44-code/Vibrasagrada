@@ -139,12 +139,16 @@ Para configurarlo:
      por ejemplo `vibra-sagrada`).
 4. Agrega ambos valores como variables de entorno donde despliegues el sitio
    (y en tu `.env.local` si quieres probarlo en desarrollo):
-   - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
-   - `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET`
+   - `CLOUDINARY_CLOUD_NAME`
+   - `CLOUDINARY_UPLOAD_PRESET`
 
-   Nota: estas dos sí llevan el prefijo `NEXT_PUBLIC_` a propósito — no son
-   secretas, el navegador las necesita para subir la imagen directamente a
-   Cloudinary sin pasar por el servidor.
+   Nota: aunque no son secretas (Cloudinary está pensado para que el cloud
+   name y un preset "unsigned" sean públicos), el panel las entrega al
+   navegador a través de una rutita del servidor (`/api/cloudinary-config`)
+   en vez de con el prefijo `NEXT_PUBLIC_`, porque ese prefijo solo funciona
+   si el proceso de build tiene acceso a la variable — y en Hostinger el
+   panel de variables de entorno solo se aplica cuando el servidor ya está
+   corriendo, no durante la compilación.
 5. Redespliega. Ya deberías poder usar "+ Subir imagen" en el admin.
 
 Mientras no configures esto, el botón de subir imagen muestra un error, pero
@@ -236,8 +240,8 @@ Tu dominio ya está en Hostinger, en un plan que incluye **Web Apps**
    valores por defecto ya están bien — no hace falta tocarlos.
 6. Agrega las variables de entorno (botón "Añadir" → una fila por variable):
    `ADMIN_SESSION_SECRET`, `ADMIN_PASSWORD_HASH`, `MERCADOPAGO_ACCESS_TOKEN`,
-   `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
-   y `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` (ver secciones "Imágenes de
+   `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `CLOUDINARY_CLOUD_NAME`
+   y `CLOUDINARY_UPLOAD_PRESET` (ver secciones "Imágenes de
    producto", "Base de datos" y "Pagos" arriba). **Ojo:** pega los
    valores tal cual, sin las barras invertidas `\` que sí lleva
    `ADMIN_PASSWORD_HASH` dentro de `.env.local` — esas solo son necesarias en
