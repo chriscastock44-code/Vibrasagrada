@@ -28,7 +28,7 @@ export default async function ProductPage({
             <img
               src={product.images[0]}
               alt={product.name}
-              className="h-full w-full rounded-[calc(1rem-2px)] object-cover"
+              className="h-full w-full rounded-[calc(1rem-2px)] object-contain"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center rounded-[calc(1rem-2px)] bg-brand-cream text-xs text-black/30">

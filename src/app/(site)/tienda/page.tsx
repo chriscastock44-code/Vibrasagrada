@@ -35,7 +35,7 @@ export default async function StorePage() {
                   <img
                     src={product.images[0]}
                     alt={product.name}
-                    className="h-full w-full rounded-[calc(1rem-2px)] object-cover transition group-hover:scale-105"
+                    className="h-full w-full rounded-[calc(1rem-2px)] object-contain transition group-hover:scale-105"
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center rounded-[calc(1rem-2px)] bg-brand-cream text-xs text-black/30">
