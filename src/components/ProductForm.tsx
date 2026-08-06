@@ -60,7 +60,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
     if (!slugTouched) setSlug(slugify(value));
   }
 
-  async function handleFilesSelected(files: FileList | null) {
+  async function handleFilesSelected(files: File[]) {
     if (!files || files.length === 0) return;
     setUploadError(null);
     setUploading(true);
@@ -78,7 +78,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
       }
 
       const uploadedUrls: string[] = [];
-      for (const file of Array.from(files)) {
+      for (const file of files) {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", config.uploadPreset);
@@ -278,8 +278,14 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
             multiple
             disabled={uploading}
             onChange={(e) => {
-              handleFilesSelected(e.target.files);
+              // Importante: copiar a un arreglo normal ANTES de limpiar el
+              // campo. e.target.files es una lista "viva" ligada al input —
+              // si se limpia el input (e.target.value = "") antes de que
+              // termine de leerse, esa misma lista se vacía también,
+              // aunque ya se le haya pasado como argumento a otra función.
+              const selectedFiles = Array.from(e.target.files || []);
               e.target.value = "";
+              handleFilesSelected(selectedFiles);
             }}
             className="hidden"
           />
