@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getAllProducts } from "@/lib/products";
 import { getAllInstagramPosts } from "@/lib/instagramPosts";
+import { formatPrice } from "@/lib/format";
 import ParallaxLayer from "@/components/ParallaxLayer";
 import InstagramFeedSection from "@/components/InstagramFeedSection";
 
-// El carrusel de Instagram se gestiona desde /admin/instagram y puede
+// Productos y carrusel de Instagram se gestionan desde /admin y pueden
 // cambiar en cualquier momento, así que esta página no debe quedar cacheada
 // como HTML estático en build.
 export const dynamic = "force-dynamic";
@@ -12,6 +14,8 @@ export const dynamic = "force-dynamic";
 const VALUE_TAGS = ["Reutilizable", "Hecho a pedido", "Diseño autoral", "Durable"];
 
 export default async function HomePage() {
+  const allFeatured = await getAllProducts({ onlyActive: true });
+  const featured = allFeatured.slice(0, 3);
   const instagramPosts = await getAllInstagramPosts();
 
   return (
@@ -108,6 +112,51 @@ export default async function HomePage() {
           </blockquote>
         </div>
       </section>
+
+      {/* PRODUCTOS DESTACADOS — fondo con el patrón "lunar" del brandbook,
+          para diferenciarla visualmente de la sección de Instagram. */}
+      {featured.length > 0 && (
+        <section className="pattern-lunar relative overflow-hidden border-y-2 border-brand-black">
+          <div className="mx-auto max-w-6xl px-6 py-20">
+            <div className="mb-10 flex items-end justify-between">
+              <h2 className="text-2xl font-extrabold text-black">Destacados</h2>
+              <Link
+                href="/tienda"
+                className="font-body text-sm font-semibold text-black underline decoration-2 underline-offset-4 hover:text-white"
+              >
+                Ver todo
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.map((product) => (
+                <Link key={product.id} href={`/tienda/${product.slug}`} className="group block">
+                  <div className="card-pop w-full overflow-hidden">
+                    {product.images[0] ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="h-auto w-full rounded-[calc(1rem-2px)] transition group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex aspect-square w-full items-center justify-center rounded-[calc(1rem-2px)] bg-brand-cream text-xs text-black/30">
+                        Sin imagen
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="mt-4 font-heading text-sm font-bold text-black">
+                    {product.name}
+                  </h3>
+                  <p className="font-body text-sm text-black/70">
+                    {formatPrice(product.priceCents, product.currency)}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <InstagramFeedSection posts={instagramPosts} />
     </div>
