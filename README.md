@@ -110,12 +110,47 @@ puedes:
   Esto es intencionalmente simple para el esqueleto — un builder visual (sin
   escribir JSON) es una mejora natural para una siguiente iteración.
 
-- Las imágenes de producto se cargan por URL (una por línea) por ahora. Para
-  subir archivos directamente desde el panel se necesita un servicio de
-  almacenamiento (p. ej. Cloudinary, S3, o el propio almacenamiento de
-  Hostinger) — es la siguiente pieza natural a agregar.
+- Las imágenes de producto se suben directamente desde el panel (botón
+  "+ Subir imagen", varias a la vez) usando Cloudinary — ver la siguiente
+  sección para configurarlo. También puedes pegar una URL de imagen a mano
+  si ya la tienes alojada en otro lugar.
 
-## 3. Base de datos
+## 3. Imágenes de producto (Cloudinary)
+
+Las imágenes que subes desde el admin no se guardan en el disco del propio
+servidor (por la misma razón que la base de datos: en hosting administrado
+como Hostinger, un archivo en disco no está garantizado a sobrevivir un
+redeploy o reinicio). En vez de eso, el navegador las sube directo a
+[Cloudinary](https://cloudinary.com), un servicio de almacenamiento de
+imágenes con un plan gratis que alcanza de sobra para una tienda chica.
+
+Para configurarlo:
+
+1. Crea una cuenta gratis en [cloudinary.com](https://cloudinary.com) (no
+   pide tarjeta para el plan gratis).
+2. En el dashboard, copia el **Cloud name** (aparece arriba, en la página
+   principal del dashboard).
+3. Ve a **Settings** (ícono de engrane) → pestaña **Upload** → sección
+   **Upload presets** → **Add upload preset**.
+   - Cambia **Signing Mode** de "Signed" a **"Unsigned"** (importante: así
+     el navegador puede subir imágenes directo sin exponer ninguna
+     contraseña ni llave secreta).
+   - Guarda y copia el **nombre** del preset que se generó (o ponle uno tú,
+     por ejemplo `vibra-sagrada`).
+4. Agrega ambos valores como variables de entorno donde despliegues el sitio
+   (y en tu `.env.local` si quieres probarlo en desarrollo):
+   - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
+   - `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET`
+
+   Nota: estas dos sí llevan el prefijo `NEXT_PUBLIC_` a propósito — no son
+   secretas, el navegador las necesita para subir la imagen directamente a
+   Cloudinary sin pasar por el servidor.
+5. Redespliega. Ya deberías poder usar "+ Subir imagen" en el admin.
+
+Mientras no configures esto, el botón de subir imagen muestra un error, pero
+el campo para pegar una URL de imagen sigue funcionando normalmente.
+
+## 4. Base de datos
 
 El proyecto usa un archivo SQLite local mientras desarrollas — no necesitas
 crear ninguna cuenta para correr `npm run dev`. Pero para **desplegar en
@@ -155,7 +190,7 @@ directo desde un archivo SQLite (`turso db shell <nombre> < dump.sql`, o
 revisa `turso db import` en su documentación) — avísame si llegas a este
 punto y te ayudo con el comando exacto.
 
-## 4. Pagos
+## 5. Pagos
 
 El checkout usa [Mercado Pago Checkout Pro](https://www.mercadopago.com.mx/developers/es/docs/checkout-pro/landing):
 el cliente paga en una página alojada por Mercado Pago (tarjeta, transferencia,
@@ -185,7 +220,7 @@ confirmación automática solo se puede probar de verdad ya desplegado (o con
 un túnel como [ngrok](https://ngrok.com) apuntando a tu `localhost:3000`
 mientras desarrollas).
 
-## 5. Desplegar en tu dominio de Hostinger
+## 6. Desplegar en tu dominio de Hostinger
 
 Tu dominio ya está en Hostinger, en un plan que incluye **Web Apps**
 (despliegue de Node.js). Estos son los pasos:
@@ -201,8 +236,9 @@ Tu dominio ya está en Hostinger, en un plan que incluye **Web Apps**
    valores por defecto ya están bien — no hace falta tocarlos.
 6. Agrega las variables de entorno (botón "Añadir" → una fila por variable):
    `ADMIN_SESSION_SECRET`, `ADMIN_PASSWORD_HASH`, `MERCADOPAGO_ACCESS_TOKEN`,
-   `TURSO_DATABASE_URL` y `TURSO_AUTH_TOKEN` (ver secciones "Base de datos" y
-   "Pagos" arriba para conseguir estos dos últimos). **Ojo:** pega los
+   `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
+   y `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` (ver secciones "Imágenes de
+   producto", "Base de datos" y "Pagos" arriba). **Ojo:** pega los
    valores tal cual, sin las barras invertidas `\` que sí lleva
    `ADMIN_PASSWORD_HASH` dentro de `.env.local` — esas solo son necesarias en
    archivos `.env`, aquí no.
@@ -214,7 +250,7 @@ no tiene Python ni herramientas de compilación — un módulo nativo como
 `better-sqlite3` falla ahí con un error de `node-gyp`. El driver de Turso no
 tiene ese problema porque no compila nada, descarga un binario ya hecho.
 
-## 6. Estructura del proyecto
+## 7. Estructura del proyecto
 
 ```
 src/
@@ -235,14 +271,12 @@ data/
                              está configurada)
 ```
 
-## 7. Próximos pasos sugeridos
+## 8. Próximos pasos sugeridos
 
 1. Copy real de la landing (historia de marca, propuesta de valor) — la
    identidad visual ya está aplicada, falta el contenido definitivo.
-2. Subida de imágenes de producto directamente desde el admin (en vez de por
-   URL).
-3. Conectar el `MERCADOPAGO_ACCESS_TOKEN` real y probar el flujo de pago de
+2. Conectar el `MERCADOPAGO_ACCESS_TOKEN` real y probar el flujo de pago de
    punta a punta, incluyendo el webhook de confirmación (necesita una URL
    pública — ver sección "Pagos").
-4. Crear la base de datos en Turso y desplegar siguiendo la sección
+3. Crear la base de datos en Turso y desplegar siguiendo la sección
    "Desplegar en tu dominio de Hostinger".
