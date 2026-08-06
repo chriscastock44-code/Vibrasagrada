@@ -1,6 +1,16 @@
 import Image from "next/image";
+import { getAllInstagramPosts } from "@/lib/instagramPosts";
 
-export default function Footer() {
+const INSTAGRAM_HANDLE = "vibra_sagrada_mx";
+const INSTAGRAM_URL = `https://instagram.com/${INSTAGRAM_HANDLE}`;
+
+// El carrusel de Instagram vive dentro del footer (mismo fondo negro, en
+// todas las páginas) en vez de ser una sección aparte solo en el home. Las
+// fotos se administran desde /admin/instagram; si no hay ninguna cargada
+// todavía, esta parte simplemente no se muestra.
+export default async function Footer() {
+  const posts = await getAllInstagramPosts();
+
   return (
     <footer className="mt-auto bg-brand-black text-brand-cream">
       <div
@@ -10,6 +20,46 @@ export default function Footer() {
             "linear-gradient(90deg, var(--brand-blue), var(--brand-pink), var(--brand-navy), var(--brand-yellow))",
         }}
       />
+
+      {posts.length > 0 && (
+        <div className="border-b-2 border-brand-cream/10">
+          <div className="mx-auto max-w-6xl px-6 py-14">
+            <div className="mb-8 flex items-end justify-between">
+              <h2 className="font-heading text-xl font-extrabold sm:text-2xl">
+                Síguenos en @{INSTAGRAM_HANDLE}
+              </h2>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-body text-sm font-semibold underline decoration-2 underline-offset-4 hover:text-brand-yellow"
+              >
+                Ver en Instagram
+              </a>
+            </div>
+
+            <div className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2">
+              {posts.map((post) => (
+                <a
+                  key={post.id}
+                  href={post.link || INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="card-pop aspect-square w-40 shrink-0 snap-start overflow-hidden sm:w-48"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={post.imageUrl}
+                    alt=""
+                    className="h-full w-full rounded-[calc(1rem-2px)] object-cover transition hover:scale-105"
+                  />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">

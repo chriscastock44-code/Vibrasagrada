@@ -1,14 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getAllProducts } from "@/lib/products";
-import { getAllInstagramPosts } from "@/lib/instagramPosts";
 import { formatPrice } from "@/lib/format";
 import ParallaxLayer from "@/components/ParallaxLayer";
-import InstagramFeedSection from "@/components/InstagramFeedSection";
 
-// Productos y carrusel de Instagram se gestionan desde /admin y pueden
-// cambiar en cualquier momento, así que esta página no debe quedar cacheada
-// como HTML estático en build.
+// Los productos se gestionan desde /admin y pueden cambiar en cualquier
+// momento, así que esta página no debe quedar cacheada como HTML estático
+// en build.
 export const dynamic = "force-dynamic";
 
 const VALUE_TAGS = ["Reutilizable", "Hecho a pedido", "Diseño autoral", "Durable"];
@@ -16,7 +14,6 @@ const VALUE_TAGS = ["Reutilizable", "Hecho a pedido", "Diseño autoral", "Durabl
 export default async function HomePage() {
   const allFeatured = await getAllProducts({ onlyActive: true });
   const featured = allFeatured.slice(0, 3);
-  const instagramPosts = await getAllInstagramPosts();
 
   return (
     <div>
@@ -113,10 +110,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* PRODUCTOS DESTACADOS — fondo con el patrón "lunar" del brandbook,
-          para diferenciarla visualmente de la sección de Instagram. */}
+      {/* PRODUCTOS DESTACADOS — fondo crema, para diferenciarla del resto
+          de secciones (navy arriba, negro del footer abajo). */}
       {featured.length > 0 && (
-        <section className="pattern-lunar relative overflow-hidden border-y-2 border-brand-black">
+        <section className="relative overflow-hidden border-y-2 border-brand-black bg-brand-cream">
           <div className="mx-auto max-w-6xl px-6 py-20">
             <div className="mb-10 flex items-end justify-between">
               <h2 className="text-2xl font-extrabold text-black">Destacados</h2>
@@ -157,8 +154,6 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-
-      <InstagramFeedSection posts={instagramPosts} />
     </div>
   );
 }
