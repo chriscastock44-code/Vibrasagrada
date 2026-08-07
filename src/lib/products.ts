@@ -1,6 +1,16 @@
 import { db, ready } from "./db";
 import type { Product, ProductCategory, ProductInput } from "./types";
 
+// Traduce errores crudos de SQLite/libSQL (poco entendibles para alguien
+// que no programa) a mensajes en español que sí dicen qué hacer.
+export function friendlyDbError(err: unknown): string {
+  const message = err instanceof Error ? err.message : String(err);
+  if (/UNIQUE constraint failed: products\.slug/i.test(message)) {
+    return "Ya existe un producto con esa URL (slug). Cambia el nombre o la URL e intenta de nuevo.";
+  }
+  return "No se pudo guardar el producto. Intenta de nuevo.";
+}
+
 interface ProductRow {
   id: number;
   slug: string;

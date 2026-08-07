@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllProducts, createProduct } from "@/lib/products";
+import { getAllProducts, createProduct, friendlyDbError } from "@/lib/products";
 import { isAdminAuthenticated } from "@/lib/auth";
 import type { ProductInput } from "@/lib/types";
 
@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
     const product = await createProduct(body);
     return NextResponse.json({ product }, { status: 201 });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Error desconocido";
-    return NextResponse.json({ error: message }, { status: 400 });
+    return NextResponse.json({ error: friendlyDbError(err) }, { status: 400 });
   }
 }
