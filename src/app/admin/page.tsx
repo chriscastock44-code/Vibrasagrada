@@ -5,6 +5,7 @@ import { getAllProducts } from "@/lib/products";
 import { formatPrice } from "@/lib/format";
 import AdminNav from "@/components/AdminNav";
 import DeleteProductButton from "@/components/DeleteProductButton";
+import ClearPersonalizationButton from "@/components/ClearPersonalizationButton";
 
 export default async function AdminDashboardPage() {
   if (!(await isAdminAuthenticated())) {
@@ -17,7 +18,10 @@ export default async function AdminDashboardPage() {
     <div>
       <AdminNav />
       <div className="mx-auto max-w-5xl px-6 py-10">
-        <h1 className="font-heading text-2xl font-extrabold">Productos</h1>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h1 className="font-heading text-2xl font-extrabold">Productos</h1>
+          {products.length > 0 && <ClearPersonalizationButton />}
+        </div>
 
         {products.length === 0 ? (
           <p className="mt-8 font-body text-black/60">

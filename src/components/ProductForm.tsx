@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import type { Product, PersonalizationField } from "@/lib/types";
 import ImagesField from "./ImagesField";
 
+// Las piezas de Vibra Sagrada son 1 de 1 y no se personalizan, así que los
+// productos nuevos empiezan sin campos. Este ejemplo queda solo como
+// referencia del formato JSON, por si algún día se vende una línea que sí
+// sea personalizable.
 const EXAMPLE_FIELDS: PersonalizationField[] = [
   {
     id: "texto_estampado",
@@ -50,7 +54,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
   const [active, setActive] = useState(initialProduct?.active ?? true);
   const [featured, setFeatured] = useState(initialProduct?.featured ?? false);
   const [fieldsJson, setFieldsJson] = useState(
-    JSON.stringify(initialProduct?.personalizationFields ?? EXAMPLE_FIELDS, null, 2)
+    JSON.stringify(initialProduct?.personalizationFields ?? [], null, 2)
   );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -198,21 +202,37 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
         <ImagesField images={images} onChange={setImages} onUploadingChange={setUploading} />
       </div>
 
-      <div>
-        <label className="mb-1 block font-body text-sm font-semibold">
-          Campos de personalización (JSON)
-        </label>
-        <textarea
-          value={fieldsJson}
-          onChange={(e) => setFieldsJson(e.target.value)}
-          rows={10}
-          className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-brand-yellow"
-        />
-        <p className="mt-1 font-body text-xs text-black/50">
-          Tipos disponibles: <code>text</code>, <code>textarea</code>,{" "}
-          <code>select</code> (con <code>options</code>), <code>image</code>.
-        </p>
-      </div>
+      <details className="rounded-lg border-2 border-brand-black/20 p-3">
+        <summary className="cursor-pointer font-body text-sm font-semibold text-black/60">
+          Personalización (avanzado — la mayoría de las piezas son 1 de 1 y no
+          necesitan esto)
+        </summary>
+        <div className="mt-3">
+          <div className="flex items-center justify-between">
+            <label className="mb-1 block font-body text-sm font-semibold">
+              Campos de personalización (JSON)
+            </label>
+            <button
+              type="button"
+              onClick={() => setFieldsJson(JSON.stringify(EXAMPLE_FIELDS, null, 2))}
+              className="mb-1 font-body text-xs font-semibold underline hover:text-brand-navy"
+            >
+              Insertar ejemplo
+            </button>
+          </div>
+          <textarea
+            value={fieldsJson}
+            onChange={(e) => setFieldsJson(e.target.value)}
+            rows={10}
+            className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+          />
+          <p className="mt-1 font-body text-xs text-black/50">
+            Tipos disponibles: <code>text</code>, <code>textarea</code>,{" "}
+            <code>select</code> (con <code>options</code>), <code>image</code>.
+            Deja <code>[]</code> si la pieza no es personalizable.
+          </p>
+        </div>
+      </details>
 
       <label className="flex items-center gap-2 font-body text-sm">
         <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
