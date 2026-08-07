@@ -74,10 +74,31 @@ async function initSchema(): Promise<void> {
   `);
 }
 
+// Adds a column to an existing table if it isn't there yet. Safe to call
+// every time the server starts: SQLite/libSQL has no "ADD COLUMN IF NOT
+// EXISTS", so we just try it and swallow the "duplicate column" error on
+// every run after the first.
+async function ensureColumn(table: string, column: string, definition: string): Promise<void> {
+  try {
+    await db.execute(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (!/duplicate column name/i.test(message)) {
+      throw err;
+    }
+  }
+}
+
+async function migrate(): Promise<void> {
+  // "Destacados" en el home ahora lo elige la marca desde /admin en vez de
+  // mostrar automáticamente los últimos productos creados.
+  await ensureColumn("products", "featured", "INTEGER NOT NULL DEFAULT 0");
+}
+
 // Every query in lib/products.ts and lib/orders.ts awaits this before
 // touching the database, so the schema is guaranteed to exist first without
 // every caller needing to know or care about setup.
-export const ready: Promise<void> = global.__vibraDbReady ?? initSchema();
+export const ready: Promise<void> = (global.__vibraDbReady ?? initSchema()).then(migrate);
 if (process.env.NODE_ENV !== "production") {
   global.__vibraDbReady = ready;
 }

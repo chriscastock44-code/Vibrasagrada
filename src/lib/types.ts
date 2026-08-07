@@ -21,6 +21,7 @@ export interface Product {
   personalizationFields: PersonalizationField[];
   stock: number;
   active: boolean;
+  featured: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -35,6 +36,7 @@ export interface ProductInput {
   personalizationFields: PersonalizationField[];
   stock: number;
   active: boolean;
+  featured?: boolean;
 }
 
 export interface InstagramPost {

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getAllProducts } from "@/lib/products";
+import { getFeaturedProducts } from "@/lib/products";
 import { formatPrice } from "@/lib/format";
 import ParallaxLayer from "@/components/ParallaxLayer";
 
@@ -12,8 +12,9 @@ export const dynamic = "force-dynamic";
 const VALUE_TAGS = ["Reutilizable", "Hecho a pedido", "Diseño autoral", "Durable"];
 
 export default async function HomePage() {
-  const allFeatured = await getAllProducts({ onlyActive: true });
-  const featured = allFeatured.slice(0, 3);
+  // Destacados los elige la marca a mano desde /admin (checkbox "Mostrar en
+  // Destacados"), no son automáticamente los últimos productos creados.
+  const featured = await getFeaturedProducts();
 
   return (
     <div>

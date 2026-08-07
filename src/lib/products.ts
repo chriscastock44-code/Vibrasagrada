@@ -12,6 +12,7 @@ interface ProductRow {
   personalizationFields: string;
   stock: number;
   active: number;
+  featured: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -28,6 +29,7 @@ function rowToProduct(row: ProductRow): Product {
     personalizationFields: JSON.parse(String(row.personalizationFields ?? "[]")),
     stock: Number(row.stock),
     active: !!Number(row.active),
+    featured: !!Number(row.featured),
     createdAt: String(row.createdAt),
     updatedAt: String(row.updatedAt),
   };
@@ -39,6 +41,16 @@ export async function getAllProducts({ onlyActive = false } = {}): Promise<Produ
     onlyActive
       ? "SELECT * FROM products WHERE active = 1 ORDER BY createdAt DESC"
       : "SELECT * FROM products ORDER BY createdAt DESC"
+  );
+  return (result.rows as unknown as ProductRow[]).map(rowToProduct);
+}
+
+// Productos elegidos a mano desde /admin para la sección "Destacados" del
+// home — en vez de mostrar automáticamente los últimos creados.
+export async function getFeaturedProducts(): Promise<Product[]> {
+  await ready;
+  const result = await db.execute(
+    "SELECT * FROM products WHERE active = 1 AND featured = 1 ORDER BY updatedAt DESC"
   );
   return (result.rows as unknown as ProductRow[]).map(rowToProduct);
 }
@@ -67,8 +79,8 @@ export async function createProduct(input: ProductInput): Promise<Product> {
   await ready;
   const result = await db.execute({
     sql: `
-      INSERT INTO products (slug, name, description, priceCents, currency, images, personalizationFields, stock, active, updatedAt)
-      VALUES (@slug, @name, @description, @priceCents, @currency, @images, @personalizationFields, @stock, @active, datetime('now'))
+      INSERT INTO products (slug, name, description, priceCents, currency, images, personalizationFields, stock, active, featured, updatedAt)
+      VALUES (@slug, @name, @description, @priceCents, @currency, @images, @personalizationFields, @stock, @active, @featured, datetime('now'))
     `,
     args: {
       slug: input.slug,
@@ -80,6 +92,7 @@ export async function createProduct(input: ProductInput): Promise<Product> {
       personalizationFields: JSON.stringify(input.personalizationFields || []),
       stock: input.stock,
       active: input.active ? 1 : 0,
+      featured: input.featured ? 1 : 0,
     },
   });
   const product = await getProductById(Number(result.lastInsertRowid));
@@ -103,6 +116,7 @@ export async function updateProduct(
         personalizationFields = @personalizationFields,
         stock = @stock,
         active = @active,
+        featured = @featured,
         updatedAt = datetime('now')
       WHERE id = @id
     `,
@@ -117,6 +131,7 @@ export async function updateProduct(
       personalizationFields: JSON.stringify(input.personalizationFields || []),
       stock: input.stock,
       active: input.active ? 1 : 0,
+      featured: input.featured ? 1 : 0,
     },
   });
   return getProductById(id);

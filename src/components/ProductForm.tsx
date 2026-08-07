@@ -48,6 +48,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
   const [uploading, setUploading] = useState(false);
   const [stock, setStock] = useState(initialProduct?.stock?.toString() || "0");
   const [active, setActive] = useState(initialProduct?.active ?? true);
+  const [featured, setFeatured] = useState(initialProduct?.featured ?? false);
   const [fieldsJson, setFieldsJson] = useState(
     JSON.stringify(initialProduct?.personalizationFields ?? EXAMPLE_FIELDS, null, 2)
   );
@@ -99,6 +100,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
             personalizationFields,
             stock: parseInt(stock, 10) || 0,
             active,
+            featured,
           }),
         }
       );
@@ -215,6 +217,15 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
       <label className="flex items-center gap-2 font-body text-sm">
         <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
         Publicado (visible en la tienda)
+      </label>
+
+      <label className="flex items-center gap-2 font-body text-sm">
+        <input
+          type="checkbox"
+          checked={featured}
+          onChange={(e) => setFeatured(e.target.checked)}
+        />
+        Mostrar en Destacados (home)
       </label>
 
       {error && <p className="text-sm text-red-600">{error}</p>}

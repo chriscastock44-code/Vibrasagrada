@@ -47,11 +47,18 @@ export default async function AdminDashboardPage() {
                   </td>
                   <td className="px-4 py-3">{product.stock}</td>
                   <td className="px-4 py-3">
-                    {product.active ? (
-                      <span className="tag-pop bg-brand-yellow text-[10px]">Publicado</span>
-                    ) : (
-                      <span className="tag-pop bg-white text-[10px] text-black/40">Oculto</span>
-                    )}
+                    <div className="flex flex-wrap gap-1">
+                      {product.active ? (
+                        <span className="tag-pop bg-brand-yellow text-[10px]">Publicado</span>
+                      ) : (
+                        <span className="tag-pop bg-white text-[10px] text-black/40">Oculto</span>
+                      )}
+                      {product.featured && (
+                        <span className="tag-pop bg-brand-pink text-[10px] text-white">
+                          Destacado
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
