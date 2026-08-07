@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/format";
 import AddToCartForm from "@/components/AddToCartForm";
+import BackButton from "@/components/BackButton";
+import LightboxImage from "@/components/LightboxImage";
 
 // Products are managed through /admin and can change at any time, so this
 // page must not be cached as static HTML at build time.
@@ -21,11 +23,11 @@ export default async function ProductPage({
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
+      <BackButton />
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
         <div className="card-pop w-full self-start overflow-hidden">
           {product.images[0] ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <LightboxImage
               src={product.images[0]}
               alt={product.name}
               className="h-auto w-full rounded-[calc(1rem-2px)]"
