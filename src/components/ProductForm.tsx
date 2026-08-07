@@ -2,30 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Product, PersonalizationField } from "@/lib/types";
+import type { Product } from "@/lib/types";
 import ImagesField from "./ImagesField";
-
-// Las piezas de Vibra Sagrada son 1 de 1 y no se personalizan, así que los
-// productos nuevos empiezan sin campos. Este ejemplo queda solo como
-// referencia del formato JSON, por si algún día se vende una línea que sí
-// sea personalizable.
-const EXAMPLE_FIELDS: PersonalizationField[] = [
-  {
-    id: "texto_estampado",
-    type: "text",
-    label: "Texto o nombre a estampar",
-    required: true,
-    maxLength: 25,
-    helpText: "Máximo 25 caracteres.",
-  },
-  {
-    id: "color_prenda",
-    type: "select",
-    label: "Color de la prenda",
-    required: true,
-    options: ["Crudo", "Negro", "Azul marino"],
-  },
-];
 
 function slugify(text: string): string {
   return text
@@ -53,9 +31,6 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
   const [stock, setStock] = useState(initialProduct?.stock?.toString() || "0");
   const [active, setActive] = useState(initialProduct?.active ?? true);
   const [featured, setFeatured] = useState(initialProduct?.featured ?? false);
-  const [fieldsJson, setFieldsJson] = useState(
-    JSON.stringify(initialProduct?.personalizationFields ?? [], null, 2)
-  );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -70,14 +45,6 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
 
     if (uploading) {
       setError("Espera a que terminen de subirse las imágenes antes de guardar.");
-      return;
-    }
-
-    let personalizationFields: PersonalizationField[];
-    try {
-      personalizationFields = JSON.parse(fieldsJson);
-    } catch {
-      setError("Los campos de personalización deben ser un JSON válido.");
       return;
     }
 
@@ -101,7 +68,9 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
             priceCents,
             currency,
             images,
-            personalizationFields,
+            // Las piezas de Vibra Sagrada son 1 de 1, no productos
+            // configurables — nunca se piden campos de personalización.
+            personalizationFields: [],
             stock: parseInt(stock, 10) || 0,
             active,
             featured,
@@ -201,38 +170,6 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
         <label className="mb-1 block font-body text-sm font-semibold">Imágenes</label>
         <ImagesField images={images} onChange={setImages} onUploadingChange={setUploading} />
       </div>
-
-      <details className="rounded-lg border-2 border-brand-black/20 p-3">
-        <summary className="cursor-pointer font-body text-sm font-semibold text-black/60">
-          Personalización (avanzado — la mayoría de las piezas son 1 de 1 y no
-          necesitan esto)
-        </summary>
-        <div className="mt-3">
-          <div className="flex items-center justify-between">
-            <label className="mb-1 block font-body text-sm font-semibold">
-              Campos de personalización (JSON)
-            </label>
-            <button
-              type="button"
-              onClick={() => setFieldsJson(JSON.stringify(EXAMPLE_FIELDS, null, 2))}
-              className="mb-1 font-body text-xs font-semibold underline hover:text-brand-navy"
-            >
-              Insertar ejemplo
-            </button>
-          </div>
-          <textarea
-            value={fieldsJson}
-            onChange={(e) => setFieldsJson(e.target.value)}
-            rows={10}
-            className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-brand-yellow"
-          />
-          <p className="mt-1 font-body text-xs text-black/50">
-            Tipos disponibles: <code>text</code>, <code>textarea</code>,{" "}
-            <code>select</code> (con <code>options</code>), <code>image</code>.
-            Deja <code>[]</code> si la pieza no es personalizable.
-          </p>
-        </div>
-      </details>
 
       <label className="flex items-center gap-2 font-body text-sm">
         <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
