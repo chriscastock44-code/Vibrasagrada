@@ -33,6 +33,7 @@ export default async function AdminDashboardPage() {
             <thead>
               <tr className="border-b-2 border-brand-black bg-brand-cream text-left text-black/60">
                 <th className="px-4 py-2">Producto</th>
+                <th className="px-4 py-2">Categoría</th>
                 <th className="px-4 py-2">Precio</th>
                 <th className="px-4 py-2">Stock</th>
                 <th className="px-4 py-2">Estado</th>
@@ -45,6 +46,9 @@ export default async function AdminDashboardPage() {
                   <td className="px-4 py-3">
                     <p className="font-heading font-bold">{product.name}</p>
                     <p className="text-xs text-black/40">/{product.slug}</p>
+                  </td>
+                  <td className="px-4 py-3 capitalize">
+                    {product.category === "playera" ? "Playera" : "Tote"}
                   </td>
                   <td className="px-4 py-3">
                     {formatPrice(product.priceCents, product.currency)}

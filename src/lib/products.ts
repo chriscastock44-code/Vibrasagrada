@@ -1,5 +1,5 @@
 import { db, ready } from "./db";
-import type { Product, ProductInput } from "./types";
+import type { Product, ProductCategory, ProductInput } from "./types";
 
 interface ProductRow {
   id: number;
@@ -13,6 +13,7 @@ interface ProductRow {
   stock: number;
   active: number;
   featured: number;
+  category: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -30,6 +31,7 @@ function rowToProduct(row: ProductRow): Product {
     stock: Number(row.stock),
     active: !!Number(row.active),
     featured: !!Number(row.featured),
+    category: (row.category as ProductCategory) || "tote",
     createdAt: String(row.createdAt),
     updatedAt: String(row.updatedAt),
   };
@@ -79,8 +81,8 @@ export async function createProduct(input: ProductInput): Promise<Product> {
   await ready;
   const result = await db.execute({
     sql: `
-      INSERT INTO products (slug, name, description, priceCents, currency, images, personalizationFields, stock, active, featured, updatedAt)
-      VALUES (@slug, @name, @description, @priceCents, @currency, @images, @personalizationFields, @stock, @active, @featured, datetime('now'))
+      INSERT INTO products (slug, name, description, priceCents, currency, images, personalizationFields, stock, active, featured, category, updatedAt)
+      VALUES (@slug, @name, @description, @priceCents, @currency, @images, @personalizationFields, @stock, @active, @featured, @category, datetime('now'))
     `,
     args: {
       slug: input.slug,
@@ -93,6 +95,7 @@ export async function createProduct(input: ProductInput): Promise<Product> {
       stock: input.stock,
       active: input.active ? 1 : 0,
       featured: input.featured ? 1 : 0,
+      category: input.category || "tote",
     },
   });
   const product = await getProductById(Number(result.lastInsertRowid));
@@ -117,6 +120,7 @@ export async function updateProduct(
         stock = @stock,
         active = @active,
         featured = @featured,
+        category = @category,
         updatedAt = datetime('now')
       WHERE id = @id
     `,
@@ -132,6 +136,7 @@ export async function updateProduct(
       stock: input.stock,
       active: input.active ? 1 : 0,
       featured: input.featured ? 1 : 0,
+      category: input.category || "tote",
     },
   });
   return getProductById(id);

@@ -77,15 +77,22 @@ async function initSchema(): Promise<void> {
 // Adds a column to an existing table if it isn't there yet. Safe to call
 // every time the server starts: SQLite/libSQL has no "ADD COLUMN IF NOT
 // EXISTS", so we just try it and swallow the "duplicate column" error on
-// every run after the first.
-async function ensureColumn(table: string, column: string, definition: string): Promise<void> {
+// every run after the first. Returns true only the one time it actually
+// creates the column, so callers can run a one-time backfill right after.
+async function ensureColumn(
+  table: string,
+  column: string,
+  definition: string
+): Promise<boolean> {
   try {
     await db.execute(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+    return true;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     if (!/duplicate column name/i.test(message)) {
       throw err;
     }
+    return false;
   }
 }
 
@@ -93,6 +100,22 @@ async function migrate(): Promise<void> {
   // "Destacados" en el home ahora lo elige la marca desde /admin en vez de
   // mostrar automáticamente los últimos productos creados.
   await ensureColumn("products", "featured", "INTEGER NOT NULL DEFAULT 0");
+
+  // Categoría para separar "Totes" y "Playeras" en /tienda.
+  const categoryJustAdded = await ensureColumn(
+    "products",
+    "category",
+    "TEXT NOT NULL DEFAULT 'tote'"
+  );
+  if (categoryJustAdded) {
+    // Backfill de una sola vez a partir del nombre (todos los productos
+    // existentes hasta ahora traen "tote" o "playera" en el nombre). Solo
+    // corre justo cuando se crea la columna — después la categoría la
+    // controla el admin a mano, esto no la vuelve a tocar.
+    await db.execute(
+      "UPDATE products SET category = 'playera' WHERE LOWER(name) LIKE '%playera%'"
+    );
+  }
 }
 
 // Every query in lib/products.ts and lib/orders.ts awaits this before

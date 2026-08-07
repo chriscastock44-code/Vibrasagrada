@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Product } from "@/lib/types";
+import type { Product, ProductCategory } from "@/lib/types";
 import ImagesField from "./ImagesField";
 
 function slugify(text: string): string {
@@ -31,6 +31,9 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
   const [stock, setStock] = useState(initialProduct?.stock?.toString() || "0");
   const [active, setActive] = useState(initialProduct?.active ?? true);
   const [featured, setFeatured] = useState(initialProduct?.featured ?? false);
+  const [category, setCategory] = useState<ProductCategory>(
+    initialProduct?.category ?? "tote"
+  );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -74,6 +77,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
             stock: parseInt(stock, 10) || 0,
             active,
             featured,
+            category,
           }),
         }
       );
@@ -128,6 +132,18 @@ export default function ProductForm({ initialProduct }: { initialProduct?: Produ
           rows={4}
           className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
         />
+      </div>
+
+      <div className="w-48">
+        <label className="mb-1 block font-body text-sm font-semibold">Categoría</label>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value as ProductCategory)}
+          className="w-full rounded-lg border-2 border-brand-black bg-white px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+        >
+          <option value="tote">Tote</option>
+          <option value="playera">Playera</option>
+        </select>
       </div>
 
       <div className="flex gap-4">

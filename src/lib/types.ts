@@ -1,5 +1,7 @@
 export type PersonalizationFieldType = "text" | "select" | "image" | "textarea";
 
+export type ProductCategory = "tote" | "playera";
+
 export interface PersonalizationField {
   id: string;
   type: PersonalizationFieldType;
@@ -22,6 +24,7 @@ export interface Product {
   stock: number;
   active: boolean;
   featured: boolean;
+  category: ProductCategory;
   createdAt: string;
   updatedAt: string;
 }
@@ -37,6 +40,7 @@ export interface ProductInput {
   stock: number;
   active: boolean;
   featured?: boolean;
+  category?: ProductCategory;
 }
 
 export interface InstagramPost {

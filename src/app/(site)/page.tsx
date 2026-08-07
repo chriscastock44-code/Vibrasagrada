@@ -119,7 +119,7 @@ export default async function HomePage() {
             <div className="mb-10 flex items-end justify-between">
               <h2 className="text-2xl font-extrabold text-black">Destacados</h2>
               <Link
-                href="/tienda"
+                href="/tienda?categoria=todos"
                 className="font-body text-sm font-semibold text-black underline decoration-2 underline-offset-4 hover:text-white"
               >
                 Ver todo
