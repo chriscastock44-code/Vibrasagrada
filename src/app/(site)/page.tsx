@@ -59,7 +59,7 @@ export default async function HomePage() {
             className="mx-auto h-auto w-64 sm:w-80"
           />
           <p className="mx-auto mt-8 max-w-xl text-balance font-body text-black/70">
-            Cuéntanos su historia y la convertimos en una pieza que no vas a
+            Cuéntanos tu historia y la convertimos en una pieza que no vas a
             querer quitarte.
           </p>
           <div className="mt-10">
