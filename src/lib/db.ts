@@ -116,6 +116,18 @@ async function migrate(): Promise<void> {
       "UPDATE products SET category = 'playera' WHERE LOWER(name) LIKE '%playera%'"
     );
   }
+
+  // Orden manual (arrastrar y soltar) de los productos en /admin y /tienda.
+  const sortOrderJustAdded = await ensureColumn(
+    "products",
+    "sortOrder",
+    "INTEGER NOT NULL DEFAULT 0"
+  );
+  if (sortOrderJustAdded) {
+    // Arranca en el mismo orden en que se crearon (id ascendente), para no
+    // dejar todos los productos empatados en 0 la primera vez.
+    await db.execute("UPDATE products SET sortOrder = id");
+  }
 }
 
 // Every query in lib/products.ts and lib/orders.ts awaits this before

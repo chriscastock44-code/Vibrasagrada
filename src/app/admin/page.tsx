@@ -1,11 +1,9 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { getAllProducts } from "@/lib/products";
-import { formatPrice } from "@/lib/format";
 import AdminNav from "@/components/AdminNav";
-import DeleteProductButton from "@/components/DeleteProductButton";
 import ClearPersonalizationButton from "@/components/ClearPersonalizationButton";
+import ProductTable from "@/components/ProductTable";
 
 export default async function AdminDashboardPage() {
   if (!(await isAdminAuthenticated())) {
@@ -29,58 +27,15 @@ export default async function AdminDashboardPage() {
             producto&rdquo;.
           </p>
         ) : (
-          <table className="card-pop mt-8 w-full border-collapse overflow-hidden font-body text-sm">
-            <thead>
-              <tr className="border-b-2 border-brand-black bg-brand-cream text-left text-black/60">
-                <th className="px-4 py-2">Producto</th>
-                <th className="px-4 py-2">Categoría</th>
-                <th className="px-4 py-2">Precio</th>
-                <th className="px-4 py-2">Stock</th>
-                <th className="px-4 py-2">Estado</th>
-                <th className="px-4 py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product.id} className="border-b border-black/10">
-                  <td className="px-4 py-3">
-                    <p className="font-heading font-bold">{product.name}</p>
-                    <p className="text-xs text-black/40">/{product.slug}</p>
-                  </td>
-                  <td className="px-4 py-3 capitalize">
-                    {product.category === "playera" ? "Playera" : "Tote"}
-                  </td>
-                  <td className="px-4 py-3">
-                    {formatPrice(product.priceCents, product.currency)}
-                  </td>
-                  <td className="px-4 py-3">{product.stock}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      {product.active ? (
-                        <span className="tag-pop bg-brand-yellow text-[10px]">Publicado</span>
-                      ) : (
-                        <span className="tag-pop bg-white text-[10px] text-black/40">Oculto</span>
-                      )}
-                      {product.featured && (
-                        <span className="tag-pop bg-brand-pink text-[10px] text-white">
-                          Destacado
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/admin/productos/${product.id}`}
-                      className="text-sm font-semibold underline hover:text-brand-navy"
-                    >
-                      Editar
-                    </Link>
-                    <DeleteProductButton productId={product.id} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <>
+            <p className="mt-8 font-body text-xs text-black/40">
+              Arrastra las filas (⠿) para cambiar el orden — es el mismo orden en
+              que aparecen en la tienda.
+            </p>
+            <div className="mt-2">
+              <ProductTable initialProducts={products} />
+            </div>
+          </>
         )}
       </div>
     </div>

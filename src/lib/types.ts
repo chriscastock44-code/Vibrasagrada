@@ -25,6 +25,7 @@ export interface Product {
   active: boolean;
   featured: boolean;
   category: ProductCategory;
+  sortOrder: number;
   createdAt: string;
   updatedAt: string;
 }
