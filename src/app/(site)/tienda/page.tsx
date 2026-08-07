@@ -16,10 +16,17 @@ const CATEGORIES: {
   value: ProductCategory;
   label: string;
   icon: ReactNode;
+  // Fondo con un patrón real del brandbook, distinto por categoría.
+  cardClassName: string;
+  // Color + sombra difuminada para que el ícono y el texto resalten sobre
+  // el patrón (que es bastante ocupado/colorido).
+  contentClassName: string;
 }[] = [
   {
     value: "tote",
     label: "Totes",
+    cardClassName: "pattern-lunar",
+    contentClassName: "text-black drop-shadow-[0_3px_10px_rgba(0,0,0,0.5)]",
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -39,6 +46,8 @@ const CATEGORIES: {
   {
     value: "playera",
     label: "Playeras",
+    cardClassName: "pattern-raya",
+    contentClassName: "text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.6)]",
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -77,10 +86,12 @@ export default async function StorePage({
             <Link
               key={cat.value}
               href={`/tienda?categoria=${cat.value}`}
-              className="card-pop flex flex-col items-center gap-4 px-8 py-14 transition hover:-translate-y-1"
+              className={`card-pop ${cat.cardClassName} flex flex-col items-center gap-4 px-8 py-14 transition hover:-translate-y-1`}
             >
-              {cat.icon}
-              <span className="font-heading text-xl font-bold">{cat.label}</span>
+              <div className={`flex flex-col items-center gap-4 ${cat.contentClassName}`}>
+                {cat.icon}
+                <span className="font-heading text-xl font-bold">{cat.label}</span>
+              </div>
             </Link>
           ))}
         </div>
