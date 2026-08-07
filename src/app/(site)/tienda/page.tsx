@@ -86,9 +86,14 @@ export default async function StorePage({
             <Link
               key={cat.value}
               href={`/tienda?categoria=${cat.value}`}
-              className={`card-pop ${cat.cardClassName} flex flex-col items-center gap-4 px-8 py-14 transition hover:-translate-y-1`}
+              className="card-pop relative flex flex-col items-center gap-4 overflow-hidden px-8 py-14 transition hover:-translate-y-1"
             >
-              <div className={`flex flex-col items-center gap-4 ${cat.contentClassName}`}>
+              {/* Patrón al 80% de opacidad sobre el fondo blanco de card-pop
+                  — se ve un poco más suave que el patrón a color completo. */}
+              <div className={`absolute inset-0 ${cat.cardClassName} opacity-80`} />
+              <div
+                className={`relative z-10 flex flex-col items-center gap-4 ${cat.contentClassName}`}
+              >
                 {cat.icon}
                 <span className="font-heading text-xl font-bold">{cat.label}</span>
               </div>
