@@ -5,6 +5,13 @@ import { useRouter } from "next/navigation";
 import type { CustomDesignImage } from "@/lib/types";
 import ImagesField from "./ImagesField";
 
+function moveItem<T>(list: T[], from: number, to: number): T[] {
+  const copy = list.slice();
+  const [moved] = copy.splice(from, 1);
+  copy.splice(to, 0, moved);
+  return copy;
+}
+
 export default function CustomDesignImagesManager({
   initialImages,
 }: {
@@ -15,8 +22,39 @@ export default function CustomDesignImagesManager({
   const [newImages, setNewImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [reordering, setReordering] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  function handleDragStart(e: React.DragEvent, index: number) {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    // Firefox necesita datos reales en dataTransfer para permitir el drag.
+    e.dataTransfer.setData("text/plain", String(index));
+  }
+
+  function handleDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+    setImages((prev) => moveItem(prev, draggedIndex, index));
+    setDraggedIndex(index);
+  }
+
+  async function handleDragEnd() {
+    setDraggedIndex(null);
+    setReordering(true);
+    try {
+      await fetch("/api/admin/reorder-custom-design-images", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: images.map((img) => img.id) }),
+      });
+      router.refresh();
+    } finally {
+      setReordering(false);
+    }
+  }
 
   async function handleAdd() {
     if (newImages.length === 0) {
@@ -61,16 +99,35 @@ export default function CustomDesignImagesManager({
     <div className="space-y-8">
       {images.length > 0 && (
         <div>
-          <h2 className="mb-3 font-heading text-sm font-bold">
-            Fotos actuales en el carrusel ({images.length})
-          </h2>
+          <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h2 className="font-heading text-sm font-bold">
+              Fotos actuales en el carrusel ({images.length})
+            </h2>
+            <p className="font-body text-xs text-black/40">
+              Arrastra una foto para cambiar el orden — es el mismo orden en que
+              aparecen en el carrusel del home.
+            </p>
+            {reordering && (
+              <p className="font-body text-xs text-black/40">Guardando orden…</p>
+            )}
+          </div>
           <div className="flex flex-wrap gap-4">
-            {images.map((image) => (
-              <div key={image.id} className="relative h-28 w-28">
+            {images.map((image, index) => (
+              <div
+                key={image.id}
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDragEnd={handleDragEnd}
+                className={`relative h-28 w-28 cursor-grab active:cursor-grabbing ${
+                  draggedIndex === index ? "opacity-40" : ""
+                }`}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={image.imageUrl}
                   alt=""
+                  draggable={false}
                   className="h-28 w-28 rounded-lg border-2 border-brand-black object-cover"
                 />
                 <button

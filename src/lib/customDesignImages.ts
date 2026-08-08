@@ -51,3 +51,18 @@ export async function deleteCustomDesignImage(id: number): Promise<void> {
   await ready;
   await db.execute({ sql: "DELETE FROM custom_design_images WHERE id = ?", args: [id] });
 }
+
+// Guarda el orden manual (arrastrar y soltar) de las fotos del carrusel de
+// "Diseños personalizados" en /admin/disenos-personalizados. Recibe la
+// lista completa de ids en el orden final deseado.
+export async function reorderCustomDesignImages(orderedIds: number[]): Promise<void> {
+  await ready;
+  if (orderedIds.length === 0) return;
+  await db.batch(
+    orderedIds.map((id, index) => ({
+      sql: "UPDATE custom_design_images SET sortOrder = ? WHERE id = ?",
+      args: [index, id],
+    })),
+    "write"
+  );
+}
