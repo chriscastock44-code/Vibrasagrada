@@ -35,6 +35,9 @@ export default function AdminNav() {
           <Link href="/admin/instagram" className="hover:text-brand-navy">
             Instagram
           </Link>
+          <Link href="/admin/disenos-personalizados" className="hover:text-brand-navy">
+            Diseños personalizados
+          </Link>
           <Link href="/tienda" target="_blank" className="hover:text-brand-navy">
             Ver tienda ↗
           </Link>

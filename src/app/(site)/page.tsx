@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getFeaturedProducts } from "@/lib/products";
+import { getAllCustomDesignImages } from "@/lib/customDesignImages";
 import { formatPrice } from "@/lib/format";
 import ParallaxLayer from "@/components/ParallaxLayer";
 
@@ -15,6 +16,7 @@ export default async function HomePage() {
   // Destacados los elige la marca a mano desde /admin (checkbox "Mostrar en
   // Destacados"), no son automáticamente los últimos productos creados.
   const featured = await getFeaturedProducts();
+  const customDesignImages = await getAllCustomDesignImages();
 
   return (
     <div>
@@ -109,6 +111,60 @@ export default async function HomePage() {
             reemplazar.&rdquo;
           </blockquote>
         </div>
+      </section>
+
+      {/* DISEÑOS PERSONALIZADOS — fondo con el patrón "Raya Sagrada"
+          (líneas rosas y azules) al 20% de opacidad, muy tenue, para no
+          competir con el texto. El carrusel de fotos se administra aparte
+          en /admin/disenos-personalizados. */}
+      <section className="relative overflow-hidden border-b-2 border-brand-black bg-brand-cream">
+        <div className="pattern-raya absolute inset-0 opacity-20" />
+
+        <div className="relative mx-auto max-w-3xl px-6 py-20 text-center">
+          <h2 className="text-2xl font-extrabold text-black sm:text-3xl">
+            Diseños personalizados
+          </h2>
+          <div className="mx-auto mt-6 max-w-2xl space-y-4 text-balance font-body text-black/70">
+            <p>
+              Vibra Sagrada transforma historias personales, recuerdos y
+              vínculos emocionales en piezas textiles diseñadas para durar. A
+              través de procesos de diseño, impresión y estampado
+              completamente autorales, desarrollamos tote bags y playeras
+              que buscan alejarse de la lógica del consumo rápido y la
+              producción masiva.
+            </p>
+            <p>
+              La personalización permite que cada pieza tenga un valor
+              emocional, fomentando un consumo más consciente y reduciendo
+              la lógica de reemplazo constante.
+            </p>
+            <p>
+              Priorizamos la creación de piezas con identidad propia,
+              alejadas de la producción masiva y de la repetición excesiva
+              de diseños. Trabajamos en pequeña escala, con intervención
+              autoral en cada etapa: desde el diseño hasta la impresión y el
+              estampado final.
+            </p>
+          </div>
+        </div>
+
+        {customDesignImages.length > 0 && (
+          <div className="relative -mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-20">
+            {customDesignImages.map((image) => (
+              <div
+                key={image.id}
+                className="card-pop aspect-square w-56 shrink-0 snap-start overflow-hidden sm:w-72"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={image.imageUrl}
+                  alt=""
+                  className="h-full w-full rounded-[calc(1rem-2px)] object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* PRODUCTOS DESTACADOS — fondo crema, para diferenciarla del resto

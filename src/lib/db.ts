@@ -71,6 +71,13 @@ async function initSchema(): Promise<void> {
       sortOrder INTEGER NOT NULL DEFAULT 0,
       createdAt TEXT NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS custom_design_images (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      imageUrl TEXT NOT NULL,
+      sortOrder INTEGER NOT NULL DEFAULT 0,
+      createdAt TEXT NOT NULL DEFAULT (datetime('now'))
+    );
   `);
 }
 

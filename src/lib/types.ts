@@ -52,6 +52,15 @@ export interface InstagramPost {
   createdAt: string;
 }
 
+// Fotos del carrusel de "Diseños personalizados" en el home — independiente
+// del carrusel de Instagram y de las imágenes de producto.
+export interface CustomDesignImage {
+  id: number;
+  imageUrl: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface CartPersonalization {
   [fieldId: string]: string;
 }
