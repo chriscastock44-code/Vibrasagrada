@@ -22,21 +22,11 @@ export default async function Footer() {
       />
 
       {posts.length > 0 && (
-        <div className="border-b-2 border-brand-cream/10">
+        <div>
           <div className="mx-auto max-w-6xl px-6 py-14">
-            <div className="mb-8 flex items-end justify-between">
-              <h2 className="font-heading text-xl font-extrabold sm:text-2xl">
-                Síguenos en @{INSTAGRAM_HANDLE}
-              </h2>
-              <a
-                href={INSTAGRAM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-body text-sm font-semibold underline decoration-2 underline-offset-4 hover:text-brand-yellow"
-              >
-                Ver en Instagram
-              </a>
-            </div>
+            <h2 className="mb-8 font-body text-sm font-semibold">
+              Síguenos en @{INSTAGRAM_HANDLE}
+            </h2>
 
             <div className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2">
               {posts.map((post) => (
@@ -56,7 +46,27 @@ export default async function Footer() {
                 </a>
               ))}
             </div>
+
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-block font-body text-sm font-semibold underline decoration-2 underline-offset-4 hover:text-brand-yellow"
+            >
+              Ver en Instagram
+            </a>
           </div>
+
+          {/* Mismo separador degradado de hasta arriba, ahora también
+              entre el carrusel y el bloque final del footer. Solo aplica
+              si hay carrusel que separar del resto. */}
+          <div
+            className="h-1.5 w-full"
+            style={{
+              background:
+                "linear-gradient(90deg, var(--brand-blue), var(--brand-pink), var(--brand-navy), var(--brand-yellow))",
+            }}
+          />
         </div>
       )}
 
@@ -65,14 +75,22 @@ export default async function Footer() {
           <div className="flex items-center gap-2">
             <Image
               src="/brand/icon-negative.png"
-              alt="Vibra Sagrada"
+              alt=""
               width={40}
               height={26}
               className="h-7 w-auto"
             />
-            <span className="font-heading text-base font-extrabold tracking-tight">
-              vibra sagrada
-            </span>
+            {/* Wordmark real de marca en blanco (misma tipografía que el
+                del header, invertida a blanco para el fondo negro del
+                footer) — antes era texto con una fuente web que no
+                correspondía al logotipo oficial. */}
+            <Image
+              src="/brand/wordmark-white.png"
+              alt="Vibra Sagrada"
+              width={762}
+              height={79}
+              className="h-4 w-auto"
+            />
           </div>
           <div className="flex items-center gap-6 font-body text-sm">
             <a
