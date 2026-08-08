@@ -160,11 +160,9 @@ export default async function HomePage() {
 
       {customDesignImages.length > 0 && (
         <section className="pattern-raya border-b-2 border-brand-black">
-          {/* El padding (margen) vive en este contenedor de afuera, y el
-              scroll en el de adentro, para que el margen a los lados sea
-              siempre del mismo tamaño que el espacio entre fotos, sin
-              importar en qué punto del carrusel esté parado el usuario. */}
-          <div className="px-4 py-14">
+          {/* El margen a los lados y las flechas de navegación viven dentro
+              del propio componente del carrusel. */}
+          <div className="py-14">
             <CustomDesignsCarousel images={customDesignImages} />
           </div>
         </section>
