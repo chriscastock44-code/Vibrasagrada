@@ -1,10 +1,10 @@
-import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getFeaturedProducts } from "@/lib/products";
 import { getAllCustomDesignImages } from "@/lib/customDesignImages";
 import { formatPrice } from "@/lib/format";
 import ParallaxLayer from "@/components/ParallaxLayer";
+import CustomDesignsCarousel from "@/components/CustomDesignsCarousel";
 
 // Los productos se gestionan desde /admin y pueden cambiar en cualquier
 // momento, así que esta página no debe quedar cacheada como HTML estático
@@ -114,14 +114,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* DISEÑOS PERSONALIZADOS — fondo con el patrón "Raya Sagrada"
-          (líneas rosas y azules) al 20% de opacidad, muy tenue, para no
-          competir con el texto. El carrusel de fotos se administra aparte
+      {/* DISEÑOS PERSONALIZADOS — dos bloques separados: el texto sobre
+          fondo crema, y el carrusel sobre el patrón "Raya Sagrada" a color
+          completo (sin diluir). El carrusel de fotos se administra aparte
           en /admin/disenos-personalizados. */}
-      <section className="relative overflow-hidden border-b-2 border-brand-black bg-brand-cream">
-        <div className="pattern-raya absolute inset-0 opacity-20" />
-
-        <div className="relative mx-auto max-w-3xl px-6 py-20 text-center">
+      <section className="border-b-2 border-brand-black bg-brand-cream">
+        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
           <h2 className="text-2xl font-extrabold text-black sm:text-3xl">
             Diseños personalizados
           </h2>
@@ -139,53 +137,21 @@ export default async function HomePage() {
               emocional, fomentando un consumo más consciente y reduciendo
               la lógica de reemplazo constante.
             </p>
-            <p>
-              Priorizamos la creación de piezas con identidad propia,
-              alejadas de la producción masiva y de la repetición excesiva
-              de diseños. Trabajamos en pequeña escala, con intervención
-              autoral en cada etapa: desde el diseño hasta la impresión y el
-              estampado final.
-            </p>
           </div>
         </div>
-
-        {customDesignImages.length > 0 && (
-          <div className="relative px-4 pb-20">
-            {/* El padding (margen) vive en este contenedor de afuera, y el
-                overflow-hidden en el de adentro — si van juntos en el mismo
-                div, "overflow-hidden" recorta hasta el borde real (no hasta
-                el padding), así que la pista animada sí llega a tocar el
-                borde de la pantalla a la mitad del loop. Separados así, el
-                recorte queda exactamente donde termina el margen, y las
-                fotos nunca lo cruzan aunque se sigan moviendo. */}
-            <div className="overflow-hidden">
-              {/* Carrusel sin fin: la lista de fotos se repite dos veces y
-                  la pista completa se anima en loop (ver .animate-marquee
-                  en globals.css) — así nunca "llega al final". La duración
-                  se ajusta según cuántas fotos haya para que la velocidad
-                  se sienta igual sin importar cuántas subas desde el admin. */}
-              <div
-                className="flex w-max animate-marquee gap-4"
-                style={{ "--marquee-duration": `${customDesignImages.length * 6}s` } as CSSProperties}
-              >
-                {[...customDesignImages, ...customDesignImages].map((image, index) => (
-                  <div
-                    key={`${image.id}-${index}`}
-                    className="card-pop aspect-square w-56 shrink-0 overflow-hidden sm:w-72"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={image.imageUrl}
-                      alt=""
-                      className="h-full w-full rounded-[calc(1rem-2px)] object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </section>
+
+      {customDesignImages.length > 0 && (
+        <section className="pattern-raya border-b-2 border-brand-black">
+          {/* El padding (margen) vive en este contenedor de afuera, y el
+              scroll en el de adentro, para que el margen a los lados sea
+              siempre del mismo tamaño que el espacio entre fotos, sin
+              importar en qué punto del carrusel esté parado el usuario. */}
+          <div className="px-4 py-14">
+            <CustomDesignsCarousel images={customDesignImages} />
+          </div>
+        </section>
+      )}
 
       {/* PRODUCTOS DESTACADOS — fondo crema, para diferenciarla del resto
           de secciones (navy arriba, negro del footer abajo). */}
