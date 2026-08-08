@@ -20,16 +20,16 @@ const CATEGORIES: {
   value: ProductCategory;
   label: string;
   icon: ReactNode;
-  // Fondo con un patrón real del brandbook, distinto por categoría.
+  // Color sólido del brandbook, distinto por categoría.
   cardClassName: string;
   // Color + sombra difuminada para que el ícono y el texto resalten sobre
-  // el patrón (que es bastante ocupado/colorido).
+  // el fondo de color.
   contentClassName: string;
 }[] = [
   {
     value: "tote",
     label: "Totes",
-    cardClassName: "pattern-lunar",
+    cardClassName: "bg-brand-blue",
     contentClassName: "text-black drop-shadow-[0_3px_10px_rgba(0,0,0,0.5)]",
     icon: (
       <svg
@@ -50,7 +50,7 @@ const CATEGORIES: {
   {
     value: "playera",
     label: "Playeras",
-    cardClassName: "pattern-raya",
+    cardClassName: "bg-brand-pink",
     contentClassName: "text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.6)]",
     icon: (
       <svg
@@ -113,11 +113,8 @@ export default async function StorePage({
             <Link
               key={cat.value}
               href={`/tienda?categoria=${cat.value}`}
-              className="card-pop relative flex flex-col items-center gap-4 overflow-hidden px-4 py-14 transition hover:-translate-y-1 sm:px-8 [container-type:inline-size]"
+              className={`card-pop relative flex flex-col items-center gap-4 overflow-hidden px-4 py-14 transition hover:-translate-y-1 sm:px-8 [container-type:inline-size] ${cat.cardClassName}`}
             >
-              {/* Patrón al 80% de opacidad sobre el fondo blanco de card-pop
-                  — se ve un poco más suave que el patrón a color completo. */}
-              <div className={`absolute inset-0 ${cat.cardClassName} opacity-80`} />
               <div
                 className={`relative z-10 flex flex-col items-center gap-4 ${cat.contentClassName}`}
               >

@@ -13,15 +13,23 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/brand/icon.png"
-            alt="Vibra Sagrada"
+            alt=""
             width={40}
             height={28}
             className="h-8 w-auto"
             priority
           />
-          <span className="font-heading text-lg font-extrabold tracking-tight">
-            vibra sagrada
-          </span>
+          {/* Wordmark recortado directo del logo oficial (misma tipografía
+              de marca) — antes era texto con una fuente web que no
+              correspondía al logotipo real. */}
+          <Image
+            src="/brand/wordmark.png"
+            alt="Vibra Sagrada"
+            width={762}
+            height={79}
+            className="h-5 w-auto"
+            priority
+          />
         </Link>
         <nav className="flex items-center gap-6 font-body text-sm font-medium">
           <Link href="/" className="hover:text-brand-navy">
