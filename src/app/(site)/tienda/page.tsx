@@ -12,10 +12,6 @@ export const metadata = {
 // page must not be cached as static HTML at build time.
 export const dynamic = "force-dynamic";
 
-// TODO: Chris va a pasar el link real de WhatsApp para "Diseños
-// personalizados" — en cuanto lo tenga, reemplazar este marcador.
-const WHATSAPP_LINK = "https://wa.me/52XXXXXXXXXX";
-
 const CATEGORIES: {
   value: ProductCategory;
   label: string;
@@ -69,29 +65,6 @@ const CATEGORIES: {
   },
 ];
 
-// No es una categoría de producto — es un botón que manda directo a
-// WhatsApp para pedir un diseño personalizado. Por eso usa fondo sólido
-// amarillo (el mismo color de los botones de "acción" del sitio) en vez de
-// un patrón, para que se lea distinto a "explorar" Totes/Playeras.
-const CUSTOM_DESIGN_CTA = {
-  label: "Diseños personalizados",
-  icon: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-12 w-12"
-      aria-hidden="true"
-    >
-      <path d="M14.5 3.5l6 6L7 23H1v-6L14.5 3.5z" />
-      <path d="M12.5 5.5l6 6" />
-    </svg>
-  ),
-};
-
 export default async function StorePage({
   searchParams,
 }: {
@@ -108,7 +81,7 @@ export default async function StorePage({
         <h1 className="text-3xl font-extrabold">Tienda</h1>
         <p className="mt-2 font-body text-black/60">¿Qué estás buscando?</p>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.value}
@@ -121,7 +94,7 @@ export default async function StorePage({
                 {cat.icon}
                 {/* El tamaño se calcula con unidades "cqw" — relativas al
                     ancho real de LA TARJETA, no de la pantalla. Así nunca se
-                    desborda, sin importar si hay 1 o 3 columnas ni qué tan
+                    desborda, sin importar si hay 1 o 2 columnas ni qué tan
                     angosto sea el navegador (a diferencia de "vw", que solo
                     mira el ancho de la ventana completa). */}
                 <span className="text-balance font-heading text-[clamp(1.1rem,11cqw,2.5rem)] leading-tight font-bold">
@@ -130,20 +103,6 @@ export default async function StorePage({
               </div>
             </Link>
           ))}
-
-          <a
-            href={WHATSAPP_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="card-pop relative flex flex-col items-center gap-4 overflow-hidden bg-brand-yellow px-4 py-14 transition hover:-translate-y-1 sm:px-8 [container-type:inline-size]"
-          >
-            <div className="relative z-10 flex flex-col items-center gap-4 text-black drop-shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
-              {CUSTOM_DESIGN_CTA.icon}
-              <span className="text-balance font-heading text-[clamp(1.1rem,11cqw,2.5rem)] leading-tight font-bold">
-                {CUSTOM_DESIGN_CTA.label}
-              </span>
-            </div>
-          </a>
         </div>
 
         <Link

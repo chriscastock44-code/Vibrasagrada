@@ -13,6 +13,10 @@ export const dynamic = "force-dynamic";
 
 const VALUE_TAGS = ["Reutilizable", "Hecho a pedido", "Diseño autoral", "Durable"];
 
+// CTA de "Diseños personalizados" en el home — manda directo a WhatsApp,
+// no a un formulario ni a la tienda.
+const WHATSAPP_LINK = "https://wa.me/529848040610";
+
 export default async function HomePage() {
   // Destacados los elige la marca a mano desde /admin (checkbox "Mostrar en
   // Destacados"), no son automáticamente los últimos productos creados.
@@ -137,6 +141,17 @@ export default async function HomePage() {
               emocional, fomentando un consumo más consciente y reduciendo
               la lógica de reemplazo constante.
             </p>
+          </div>
+
+          <div className="mt-8">
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-pop btn-pop-primary px-8 py-3 text-sm"
+            >
+              Pide tu diseño por WhatsApp
+            </a>
           </div>
         </div>
       </section>
