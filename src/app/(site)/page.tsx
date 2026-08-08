@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getFeaturedProducts } from "@/lib/products";
@@ -149,20 +150,39 @@ export default async function HomePage() {
         </div>
 
         {customDesignImages.length > 0 && (
-          <div className="relative -mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-20">
-            {customDesignImages.map((image) => (
+          <div className="relative px-4 pb-20">
+            {/* El padding (margen) vive en este contenedor de afuera, y el
+                overflow-hidden en el de adentro — si van juntos en el mismo
+                div, "overflow-hidden" recorta hasta el borde real (no hasta
+                el padding), así que la pista animada sí llega a tocar el
+                borde de la pantalla a la mitad del loop. Separados así, el
+                recorte queda exactamente donde termina el margen, y las
+                fotos nunca lo cruzan aunque se sigan moviendo. */}
+            <div className="overflow-hidden">
+              {/* Carrusel sin fin: la lista de fotos se repite dos veces y
+                  la pista completa se anima en loop (ver .animate-marquee
+                  en globals.css) — así nunca "llega al final". La duración
+                  se ajusta según cuántas fotos haya para que la velocidad
+                  se sienta igual sin importar cuántas subas desde el admin. */}
               <div
-                key={image.id}
-                className="card-pop aspect-square w-56 shrink-0 snap-start overflow-hidden sm:w-72"
+                className="flex w-max animate-marquee gap-4"
+                style={{ "--marquee-duration": `${customDesignImages.length * 6}s` } as CSSProperties}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image.imageUrl}
-                  alt=""
-                  className="h-full w-full rounded-[calc(1rem-2px)] object-cover"
-                />
+                {[...customDesignImages, ...customDesignImages].map((image, index) => (
+                  <div
+                    key={`${image.id}-${index}`}
+                    className="card-pop aspect-square w-56 shrink-0 overflow-hidden sm:w-72"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={image.imageUrl}
+                      alt=""
+                      className="h-full w-full rounded-[calc(1rem-2px)] object-cover"
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         )}
       </section>

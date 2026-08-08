@@ -121,3 +121,26 @@ h1, h2, h3, h4, .font-heading {
     );
   }
 }
+
+/* Carrusel "sin fin": la pista duplica sus elementos y se desliza -50% de
+   su propio ancho; como la segunda mitad es una copia exacta de la
+   primera, el punto en el que "termina" es visualmente idéntico al punto
+   en el que "empieza", así que el loop no se nota. Se pausa en hover para
+   poder ver bien una foto sin que se siga moviendo. */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@layer utilities {
+  .animate-marquee {
+    animation: marquee-x var(--marquee-duration, 40s) linear infinite;
+  }
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
+}
