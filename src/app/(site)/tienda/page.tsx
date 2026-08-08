@@ -113,7 +113,7 @@ export default async function StorePage({
             <Link
               key={cat.value}
               href={`/tienda?categoria=${cat.value}`}
-              className="card-pop relative flex flex-col items-center gap-4 overflow-hidden px-4 py-14 transition hover:-translate-y-1 sm:px-8"
+              className="card-pop relative flex flex-col items-center gap-4 overflow-hidden px-4 py-14 transition hover:-translate-y-1 sm:px-8 [container-type:inline-size]"
             >
               {/* Patrón al 80% de opacidad sobre el fondo blanco de card-pop
                   — se ve un poco más suave que el patrón a color completo. */}
@@ -122,7 +122,12 @@ export default async function StorePage({
                 className={`relative z-10 flex flex-col items-center gap-4 ${cat.contentClassName}`}
               >
                 {cat.icon}
-                <span className="text-balance font-heading text-[clamp(1.5rem,6vw,2.5rem)] leading-tight font-bold">
+                {/* El tamaño se calcula con unidades "cqw" — relativas al
+                    ancho real de LA TARJETA, no de la pantalla. Así nunca se
+                    desborda, sin importar si hay 1 o 3 columnas ni qué tan
+                    angosto sea el navegador (a diferencia de "vw", que solo
+                    mira el ancho de la ventana completa). */}
+                <span className="text-balance font-heading text-[clamp(1.1rem,11cqw,2.5rem)] leading-tight font-bold">
                   {cat.label}
                 </span>
               </div>
@@ -133,11 +138,11 @@ export default async function StorePage({
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="card-pop relative flex flex-col items-center gap-4 overflow-hidden bg-brand-yellow px-4 py-14 transition hover:-translate-y-1 sm:px-8"
+            className="card-pop relative flex flex-col items-center gap-4 overflow-hidden bg-brand-yellow px-4 py-14 transition hover:-translate-y-1 sm:px-8 [container-type:inline-size]"
           >
             <div className="relative z-10 flex flex-col items-center gap-4 text-black drop-shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
               {CUSTOM_DESIGN_CTA.icon}
-              <span className="text-balance font-heading text-[clamp(1.5rem,6vw,2.5rem)] leading-tight font-bold">
+              <span className="text-balance font-heading text-[clamp(1.1rem,11cqw,2.5rem)] leading-tight font-bold">
                 {CUSTOM_DESIGN_CTA.label}
               </span>
             </div>
