@@ -96,8 +96,8 @@ export default async function HomePage() {
           <Image
             src="/brand/icon-negative.png"
             alt=""
-            width={280}
-            height={180}
+            width={190}
+            height={119}
             className="h-32 w-auto sm:h-44"
           />
         </ParallaxLayer>

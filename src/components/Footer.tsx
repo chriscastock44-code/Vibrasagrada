@@ -76,8 +76,8 @@ export default async function Footer() {
             <Image
               src="/brand/icon-negative.png"
               alt=""
-              width={40}
-              height={26}
+              width={190}
+              height={119}
               className="h-7 w-auto"
             />
             {/* Wordmark real de marca en blanco (misma tipografía que el
