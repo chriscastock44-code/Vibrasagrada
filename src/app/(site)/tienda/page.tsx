@@ -18,15 +18,14 @@ const CATEGORIES: {
   icon: ReactNode;
   // Color sólido del brandbook, distinto por categoría.
   cardClassName: string;
-  // Color + sombra difuminada para que el ícono y el texto resalten sobre
-  // el fondo de color.
+  // Color del ícono y el texto sobre el fondo de esa categoría.
   contentClassName: string;
 }[] = [
   {
     value: "tote",
     label: "Totes",
     cardClassName: "bg-brand-blue",
-    contentClassName: "text-black drop-shadow-[0_3px_10px_rgba(0,0,0,0.5)]",
+    contentClassName: "text-black",
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -47,7 +46,7 @@ const CATEGORIES: {
     value: "playera",
     label: "Playeras",
     cardClassName: "bg-brand-pink",
-    contentClassName: "text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.6)]",
+    contentClassName: "text-white",
     icon: (
       <svg
         viewBox="0 0 24 24"

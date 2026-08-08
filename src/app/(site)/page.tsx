@@ -55,7 +55,9 @@ export default async function HomePage() {
 
         <div className="mx-auto max-w-6xl px-6 py-20 text-center sm:py-28">
           <p className="mb-6 font-body text-xs font-semibold tracking-[0.3em] text-brand-navy uppercase">
-            Piezas con historia, no con etiqueta
+            Piezas con historia
+            <br />
+            no con etiqueta
           </p>
           <Image
             src="/brand/logo.png"
