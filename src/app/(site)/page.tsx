@@ -32,7 +32,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden">
         <ParallaxLayer
           speed={0.28}
-          className="pointer-events-none absolute -right-16 top-10 -z-10 h-40 w-40 -rotate-6 border-2 border-brand-black sm:h-56 sm:w-56"
+          className="pointer-events-none absolute -right-28 top-10 -z-10 h-40 w-40 -rotate-6 border-2 border-brand-black sm:-right-16 sm:h-56 sm:w-56"
           style={{
             backgroundColor: "var(--brand-navy)",
             backgroundImage:

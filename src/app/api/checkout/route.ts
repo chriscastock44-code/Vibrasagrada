@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPreferenceClient } from "@/lib/mercadopago";
+import { createPreferenceWithDiagnostics } from "@/lib/mercadopago";
 import { getProductById } from "@/lib/products";
 import { createOrder, setOrderPreferenceId } from "@/lib/orders";
 import type { CartItem } from "@/lib/types";
@@ -40,8 +40,7 @@ export async function POST(request: NextRequest) {
     currency,
   });
 
-  const preferenceClient = getPreferenceClient();
-  if (!preferenceClient) {
+  if (!process.env.MERCADOPAGO_ACCESS_TOKEN) {
     // Payment gateway not configured yet — let the frontend show setup
     // instructions instead of a hard failure.
     return NextResponse.json(
@@ -54,39 +53,61 @@ export async function POST(request: NextRequest) {
   const isHttps = origin.startsWith("https://");
 
   try {
-    const preference = await preferenceClient.create({
-      body: {
-        items: items.map((item) => {
-          const product = productsById.get(item.productId)!;
-          const personalizationSummary = Object.entries(item.personalization || {})
-            .map(([k, v]) => `${k}: ${v.startsWith("data:") ? "(archivo adjunto)" : v}`)
-            .join(" · ");
-          return {
-            id: String(product.id),
-            title: product.name,
-            description: personalizationSummary || undefined,
-            quantity: item.quantity,
-            currency_id: product.currency,
-            unit_price: product.priceCents / 100,
-          };
-        }),
-        payer: customerEmail ? { email: customerEmail } : undefined,
-        external_reference: String(orderId),
-        back_urls: {
-          success: `${origin}/tienda/checkout/gracias`,
-          pending: `${origin}/tienda/checkout`,
-          failure: `${origin}/tienda/checkout`,
-        },
-        // auto_return only works with https back_urls — Mercado Pago
-        // rejects the preference otherwise, which matters for local dev.
-        ...(isHttps ? { auto_return: "approved" as const } : {}),
-        notification_url: `${origin}/api/mercadopago/webhook`,
+    const result = await createPreferenceWithDiagnostics({
+      items: items.map((item) => {
+        const product = productsById.get(item.productId)!;
+        const personalizationSummary = Object.entries(item.personalization || {})
+          .map(([k, v]) => `${k}: ${v.startsWith("data:") ? "(archivo adjunto)" : v}`)
+          .join(" · ");
+        return {
+          id: String(product.id),
+          title: product.name,
+          description: personalizationSummary || undefined,
+          quantity: item.quantity,
+          currency_id: product.currency,
+          unit_price: product.priceCents / 100,
+        };
+      }),
+      payer: customerEmail ? { email: customerEmail } : undefined,
+      external_reference: String(orderId),
+      back_urls: {
+        success: `${origin}/tienda/checkout/gracias`,
+        pending: `${origin}/tienda/checkout`,
+        failure: `${origin}/tienda/checkout`,
       },
+      // auto_return only works with https back_urls — Mercado Pago
+      // rejects the preference otherwise, which matters for local dev.
+      ...(isHttps ? { auto_return: "approved" as const } : {}),
+      notification_url: `${origin}/api/mercadopago/webhook`,
     });
 
-    await setOrderPreferenceId(orderId, preference.id!);
+    if (!result.ok) {
+      // TEMPORAL — mientras se resuelve el ticket WCS-45163 con soporte de
+      // Mercado Pago, exponemos el x-request-id y el detalle del error en
+      // la respuesta para poder capturarlos desde la pestaña Network del
+      // navegador sin necesitar acceso a los logs del servidor en
+      // Hostinger. Quitar este detalle extra una vez resuelto el ticket.
+      console.error("Error al crear la preferencia de Mercado Pago:", {
+        status: result.status,
+        xRequestId: result.xRequestId,
+        body: result.body,
+      });
+      return NextResponse.json(
+        {
+          error: "No se pudo iniciar el pago con Mercado Pago.",
+          mercadoPagoDebug: {
+            status: result.status,
+            xRequestId: result.xRequestId,
+            detail: result.body,
+          },
+        },
+        { status: 502 }
+      );
+    }
 
-    return NextResponse.json({ url: preference.init_point });
+    await setOrderPreferenceId(orderId, result.id);
+
+    return NextResponse.json({ url: result.initPoint });
   } catch (err) {
     console.error("Error al crear la preferencia de Mercado Pago:", err);
     return NextResponse.json(
