@@ -49,7 +49,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const origin = request.nextUrl.origin;
+  // En Hostinger, `request.nextUrl.origin` no siempre trae el dominio real
+  // (vibrasagrada.mx) — el proxy reenvía la petición a Next.js sin pasarle
+  // bien el host original, así que a veces se resuelve como
+  // "https://0.0.0.0:3000". Eso rompía el checkout: Mercado Pago recibía
+  // back_urls/notification_url apuntando a una IP interna en vez del sitio
+  // real. Por eso usamos SITE_URL (variable de entorno fija) cuando está
+  // configurada, y solo caemos a request.nextUrl.origin como respaldo para
+  // desarrollo local, donde no hace falta configurarla.
+  const origin = process.env.SITE_URL || request.nextUrl.origin;
   const isHttps = origin.startsWith("https://");
 
   try {

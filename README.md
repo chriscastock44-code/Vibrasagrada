@@ -68,6 +68,11 @@ cp .env.example .env.local
   muestra un aviso de "pasarela no configurada" en vez de fallar, y en
   desarrollo puedes simular un pedido de prueba para probar el flujo completo
   (carrito → checkout → gracias).
+- `SITE_URL`: opcional en desarrollo (se usa `http://localhost:3000`), pero
+  **obligatoria en producción/Hostinger** — ej. `https://vibrasagrada.mx`
+  (sin slash al final). El checkout la usa para armar las URLs que le manda a
+  Mercado Pago; sin ella, en Hostinger puede resolverse el dominio como una
+  IP interna y Mercado Pago rechaza el pago.
 
 Ya dejé un `.env.local` con una contraseña de prueba (`vibra2026`) generada
 automáticamente para que puedas probar el panel de admin de inmediato.
@@ -240,12 +245,16 @@ Tu dominio ya está en Hostinger, en un plan que incluye **Web Apps**
    valores por defecto ya están bien — no hace falta tocarlos.
 6. Agrega las variables de entorno (botón "Añadir" → una fila por variable):
    `ADMIN_SESSION_SECRET`, `ADMIN_PASSWORD_HASH`, `MERCADOPAGO_ACCESS_TOKEN`,
+   `SITE_URL` (= `https://vibrasagrada.mx`, sin slash al final),
    `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `CLOUDINARY_CLOUD_NAME`
    y `CLOUDINARY_UPLOAD_PRESET` (ver secciones "Imágenes de
    producto", "Base de datos" y "Pagos" arriba). **Ojo:** pega los
    valores tal cual, sin las barras invertidas `\` que sí lleva
    `ADMIN_PASSWORD_HASH` dentro de `.env.local` — esas solo son necesarias en
-   archivos `.env`, aquí no.
+   archivos `.env`, aquí no. **`SITE_URL` es importante:** sin ella, en
+   Hostinger el checkout puede armar las URLs que le manda a Mercado Pago
+   apuntando a una IP interna en vez de tu dominio real, y el pago se
+   rechaza.
 7. Dale a implementar/desplegar.
 
 **Nota sobre `better-sqlite3`:** este proyecto usa Turso (libSQL) en vez de
