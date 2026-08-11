@@ -29,7 +29,13 @@ export function getPaymentClient(): Payment | null {
 
 export type PreferenceDiagnosticsResult =
   | { ok: true; id: string; initPoint: string; xRequestId: string | null }
-  | { ok: false; status: number; xRequestId: string | null; body: unknown };
+  | {
+      ok: false;
+      status: number;
+      xRequestId: string | null;
+      body: unknown;
+      request: { url: string; method: string; body: Record<string, unknown> };
+    };
 
 /**
  * Crea una preferencia de Checkout Pro llamando directamente a la API REST
@@ -51,7 +57,9 @@ export async function createPreferenceWithDiagnostics(
     throw new Error("MERCADOPAGO_ACCESS_TOKEN no está configurada.");
   }
 
-  const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
+  const endpoint = "https://api.mercadopago.com/checkout/preferences";
+
+  const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -64,7 +72,16 @@ export async function createPreferenceWithDiagnostics(
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    return { ok: false, status: response.status, xRequestId, body: data };
+    // Incluimos la petición completa que le mandamos a Mercado Pago (sin el
+    // access token) porque soporte, en el ticket WCS-45163, pidió "el
+    // request completo donde reciben el error" — no solo el x-request-id.
+    return {
+      ok: false,
+      status: response.status,
+      xRequestId,
+      body: data,
+      request: { url: endpoint, method: "POST", body },
+    };
   }
 
   return { ok: true, id: data.id, initPoint: data.init_point, xRequestId };

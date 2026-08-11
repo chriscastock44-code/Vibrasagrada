@@ -91,6 +91,7 @@ export async function POST(request: NextRequest) {
         status: result.status,
         xRequestId: result.xRequestId,
         body: result.body,
+        request: result.request,
       });
       return NextResponse.json(
         {
@@ -99,6 +100,9 @@ export async function POST(request: NextRequest) {
             status: result.status,
             xRequestId: result.xRequestId,
             detail: result.body,
+            // La petición completa que le mandamos a Mercado Pago (sin el
+            // access token) — soporte la pidió para el ticket WCS-45163.
+            request: result.request,
           },
         },
         { status: 502 }
