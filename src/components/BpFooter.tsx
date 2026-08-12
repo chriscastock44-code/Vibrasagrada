@@ -19,11 +19,11 @@ export default function BpFooter() {
         <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           <Link href="/" className="flex w-fit items-center gap-2">
             <Image
-              src="/brand/barks-and-paws-icon.png"
-              alt="Barks & Paws"
-              width={199}
-              height={143}
-              className="h-7 w-auto"
+              src="/brand/barks-and-paws-wordmark.png"
+              alt="Barks & Paws · Custom Pet Accessories"
+              width={2867}
+              height={552}
+              className="h-10 w-auto"
             />
           </Link>
           <div className="flex items-center gap-6 font-body text-sm">
@@ -53,7 +53,7 @@ export default function BpFooter() {
           </div>
         </div>
         <p className="mt-8 font-body text-xs text-brand-cream/70">
-          ✦ by @VibraSagrada — accesorios personalizados para mascotas y sus humanos.
+          ✦ by @VibraSagrada, accesorios personalizados para mascotas y sus humanos.
         </p>
         <p className="mt-2 font-body text-xs text-brand-cream/50">
           © {new Date().getFullYear()} Barks &amp; Paws. Todos los derechos reservados.

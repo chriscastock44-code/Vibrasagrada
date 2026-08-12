@@ -13,9 +13,9 @@ import { getAllBpProductPhotos } from "@/lib/bpProductPhotos";
 const HERO_TAGS = ["Tags", "Bandanas", "Totes"];
 
 export const metadata: Metadata = {
-  title: "Barks & Paws — Vibra Sagrada",
+  title: "Barks & Paws · Vibra Sagrada",
   description:
-    "Accesorios personalizados para mascotas y sus humanos. Tags, bandanas y totes — una marca hija de Vibra Sagrada.",
+    "Accesorios personalizados para mascotas y sus humanos. Tags, bandanas y totes. Una marca hija de Vibra Sagrada.",
 };
 
 // El contenido de "Lo que viene" y "Productos ya hechos" se administra
@@ -40,8 +40,10 @@ export default async function BarksAndPawsPage() {
 
   return (
     <div>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-brand-cream">
+      {/* HERO — mismo fondo azul/índigo (pattern-bp-grain) que el resto de
+          los bloques de marca de Barks & Paws, en vez del crema que tenía
+          antes. */}
+      <section className="pattern-bp-grain relative overflow-hidden">
         {/* La rotación va en un span interno, no en el ParallaxLayer: el
             componente pisa cualquier "transform" que le pasemos por style
             (lo necesita para su propio translate3d del scroll), así que una
@@ -62,16 +64,16 @@ export default async function BarksAndPawsPage() {
         <div className="mx-auto max-w-2xl px-6 py-16 text-center sm:py-24">
           <Image
             src="/brand/barks-and-paws-logo.png"
-            alt="Barks & Paws — Custom Pet Accessories"
+            alt="Barks & Paws · Custom Pet Accessories"
             width={523}
             height={468}
             priority
             className="mx-auto h-auto w-56 sm:w-64"
           />
-          <p className="mt-2 font-heading text-2xl font-extrabold text-black sm:text-3xl">
+          <p className="mt-2 font-heading text-2xl font-extrabold text-brand-cream sm:text-3xl">
             🐾 Tu mascota. Su vibra.
           </p>
-          <p className="mx-auto mt-3 max-w-md text-balance font-body text-black/70">
+          <p className="mx-auto mt-3 max-w-md text-balance font-body text-brand-cream/85">
             Accesorios personalizados para mascotas y sus humanos.
           </p>
 
@@ -80,7 +82,7 @@ export default async function BarksAndPawsPage() {
               <span key={tag} className="flex items-center gap-2">
                 <span className="tag-pop bg-white">{tag}</span>
                 {index < HERO_TAGS.length - 1 && (
-                  <span className="text-black/30" aria-hidden="true">
+                  <span className="text-brand-cream/40" aria-hidden="true">
                     ·
                   </span>
                 )}
@@ -100,7 +102,7 @@ export default async function BarksAndPawsPage() {
             </a>
           </div>
 
-          <p className="mt-6 font-body text-xs font-semibold text-black/50">
+          <p className="mt-6 font-body text-xs font-semibold text-brand-cream/70">
             ✦ by @VibraSagrada
           </p>
         </div>
@@ -114,7 +116,7 @@ export default async function BarksAndPawsPage() {
           <div className="mx-auto max-w-4xl px-6 py-16 text-center">
             <h2 className="text-2xl font-extrabold text-black sm:text-3xl">Lo que viene</h2>
             <p className="mx-auto mt-3 max-w-md text-balance font-body text-black/60">
-              Estamos preparando la primera colección — muy pronto puedes personalizar la tuya.
+              Estamos preparando la primera colección, muy pronto puedes personalizar la tuya.
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -155,7 +157,7 @@ export default async function BarksAndPawsPage() {
           <div className="mx-auto max-w-4xl px-6 pt-16 text-center">
             <h2 className="text-2xl font-extrabold text-black sm:text-3xl">Productos ya hechos</h2>
             <p className="mx-auto mt-3 max-w-md text-balance font-body text-black/60">
-              Algunas piezas que ya se han personalizado — para que veas de qué se trata.
+              Algunas piezas que ya se han personalizado, para que veas de qué se trata.
             </p>
           </div>
           <div className="py-10">
@@ -171,7 +173,7 @@ export default async function BarksAndPawsPage() {
             Una marca, una familia
           </h2>
           <p className="mt-4 text-balance font-body text-brand-cream/85">
-            Barks &amp; Paws nace de Vibra Sagrada — la misma idea de piezas con historia, ahora
+            Barks &amp; Paws nace de Vibra Sagrada, la misma idea de piezas con historia, ahora
             pensada para tu mascota y para ti. Diseños autorales, hechos a pedido, para contar
             juntos la misma historia.
           </p>
@@ -179,7 +181,7 @@ export default async function BarksAndPawsPage() {
             className="mt-6 inline-flex items-center gap-2 rounded-full border-2 px-4 py-1.5 font-body text-xs font-semibold"
             style={{ borderColor: "var(--brand-bp-teal)", color: "var(--brand-bp-teal)" }}
           >
-            ✦ Vibra Sagrada Family
+            ✦ Vibra Sagrada Family ✦
           </span>
         </div>
       </section>
