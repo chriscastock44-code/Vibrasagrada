@@ -90,11 +90,12 @@ export async function POST(request: NextRequest) {
     });
 
     if (!result.ok) {
-      // TEMPORAL — mientras se resuelve el ticket WCS-45163 con soporte de
-      // Mercado Pago, exponemos el x-request-id y el detalle del error en
-      // la respuesta para poder capturarlos desde la pestaña Network del
-      // navegador sin necesitar acceso a los logs del servidor en
-      // Hostinger. Quitar este detalle extra una vez resuelto el ticket.
+      // El detalle completo (x-request-id, request enviado, respuesta de
+      // Mercado Pago) queda solo en los logs del servidor para poder
+      // diagnosticar futuros problemas — ya no se expone en la respuesta al
+      // cliente (se usó temporalmente así para el ticket WCS-45163, ya
+      // resuelto: la causa fue tener la Public Key en vez del Access Token
+      // en la variable MERCADOPAGO_ACCESS_TOKEN).
       console.error("Error al crear la preferencia de Mercado Pago:", {
         status: result.status,
         xRequestId: result.xRequestId,
@@ -102,17 +103,7 @@ export async function POST(request: NextRequest) {
         request: result.request,
       });
       return NextResponse.json(
-        {
-          error: "No se pudo iniciar el pago con Mercado Pago.",
-          mercadoPagoDebug: {
-            status: result.status,
-            xRequestId: result.xRequestId,
-            detail: result.body,
-            // La petición completa que le mandamos a Mercado Pago (sin el
-            // access token) — soporte la pidió para el ticket WCS-45163.
-            request: result.request,
-          },
-        },
+        { error: "No se pudo iniciar el pago con Mercado Pago." },
         { status: 502 }
       );
     }
