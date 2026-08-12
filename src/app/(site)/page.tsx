@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getFeaturedProducts } from "@/lib/products";
 import { getAllCustomDesignImages } from "@/lib/customDesignImages";
 import { formatPrice } from "@/lib/format";
+import { WHATSAPP_LINK } from "@/lib/constants";
 import ParallaxLayer from "@/components/ParallaxLayer";
 import CustomDesignsCarousel from "@/components/CustomDesignsCarousel";
 
@@ -12,10 +13,6 @@ import CustomDesignsCarousel from "@/components/CustomDesignsCarousel";
 export const dynamic = "force-dynamic";
 
 const VALUE_TAGS = ["Reutilizable", "Hecho a pedido", "Diseño autoral", "Durable"];
-
-// CTA de "Diseños personalizados" en el home — manda directo a WhatsApp,
-// no a un formulario ni a la tienda.
-const WHATSAPP_LINK = "https://wa.me/529848040610";
 
 export default async function HomePage() {
   // Destacados los elige la marca a mano desde /admin (checkbox "Mostrar en

@@ -61,6 +61,27 @@ export interface CustomDesignImage {
   createdAt: string;
 }
 
+// Tarjetas de "Lo que viene" en la landing de Barks & Paws — cada una tiene
+// su propia foto y texto, a diferencia del carrusel de Diseños
+// personalizados (que es solo fotos).
+export interface BpUpcomingItem {
+  id: number;
+  imageUrl: string;
+  title: string;
+  description: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
+// Fotos del carrusel de "Productos ya hechos" en la landing de Barks & Paws.
+export interface BpProductPhoto {
+  id: number;
+  imageUrl: string;
+  caption: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface CartPersonalization {
   [fieldId: string]: string;
 }

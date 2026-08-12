@@ -78,6 +78,27 @@ async function initSchema(): Promise<void> {
       sortOrder INTEGER NOT NULL DEFAULT 0,
       createdAt TEXT NOT NULL DEFAULT (datetime('now'))
     );
+
+    -- Tarjetas de "Lo que viene" en la landing de Barks & Paws
+    -- (/barks-and-paws) — a diferencia de custom_design_images, cada una
+    -- lleva su propio texto (título + descripción) además de la foto.
+    CREATE TABLE IF NOT EXISTS bp_upcoming_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      imageUrl TEXT NOT NULL DEFAULT '',
+      title TEXT NOT NULL DEFAULT '',
+      description TEXT NOT NULL DEFAULT '',
+      sortOrder INTEGER NOT NULL DEFAULT 0,
+      createdAt TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    -- Carrusel de "Productos ya hechos" en la landing de Barks & Paws.
+    CREATE TABLE IF NOT EXISTS bp_product_photos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      imageUrl TEXT NOT NULL,
+      caption TEXT NOT NULL DEFAULT '',
+      sortOrder INTEGER NOT NULL DEFAULT 0,
+      createdAt TEXT NOT NULL DEFAULT (datetime('now'))
+    );
   `);
 }
 

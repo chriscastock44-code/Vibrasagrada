@@ -38,6 +38,9 @@ export default function AdminNav() {
           <Link href="/admin/disenos-personalizados" className="hover:text-brand-navy">
             Diseños personalizados
           </Link>
+          <Link href="/admin/barks-and-paws" className="hover:text-brand-navy">
+            Barks &amp; Paws
+          </Link>
           <Link href="/tienda" target="_blank" className="hover:text-brand-navy">
             Ver tienda ↗
           </Link>
