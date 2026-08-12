@@ -7,12 +7,14 @@ const INSTAGRAM_URL =
 // Footer exclusivo de la landing de Barks & Paws — a propósito NO reutiliza
 // el Footer de Vibra Sagrada, porque ese trae el carrusel "Síguenos en
 // @vibra_sagrada_mx" (Instagram de Vibra Sagrada, no de Barks & Paws) y esta
-// landing necesita su propio Instagram y su propia identidad visual
-// (índigo/teal en vez del negro de marca). Sí mantiene el link de vuelta a
-// Vibra Sagrada para conservar la conexión "marca hija".
+// landing necesita su propio Instagram. Fondo negro (igual que el footer de
+// Vibra Sagrada) con acentos en teal — el azul/índigo de la marca se queda
+// solo en la sección "Una marca, una familia" de la landing, para que el
+// footer se distinga de ese bloque. Sí mantiene el link de vuelta a Vibra
+// Sagrada para conservar la conexión "marca hija".
 export default function BpFooter() {
   return (
-    <footer className="pattern-bp-grain mt-auto text-brand-cream">
+    <footer className="mt-auto bg-brand-black text-brand-cream">
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           <Link href="/" className="flex w-fit items-center gap-2">
