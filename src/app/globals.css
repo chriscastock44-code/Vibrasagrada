@@ -17,6 +17,13 @@
   --brand-black: #000000;
   --brand-cream: #faf4e8; /* Crudo */
 
+  /* Paleta Barks & Paws — marca hija de Vibra Sagrada (accesorios para
+     mascotas). Turquesa sacado del logotipo oficial de la marca; índigo
+     sacado del segundo asset de marca (fondo con textura) que compartieron
+     para usarse como color secundario. */
+  --brand-bp-teal: #00f5d4;
+  --brand-bp-indigo: #4840cb;
+
   --font-heading: "Baloo 2", system-ui, sans-serif;
   --font-body: "Poppins", system-ui, sans-serif;
 }
@@ -31,6 +38,9 @@
   --color-brand-navy: var(--brand-navy);
   --color-brand-black: var(--brand-black);
   --color-brand-cream: var(--brand-cream);
+
+  --color-brand-bp-teal: var(--brand-bp-teal);
+  --color-brand-bp-indigo: var(--brand-bp-indigo);
 
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
@@ -119,5 +129,13 @@ h1, h2, h3, h4, .font-heading {
       var(--brand-navy) 10px,
       var(--brand-navy) 20px
     );
+  }
+
+  /* Textura granulada del segundo asset de marca de Barks & Paws (fondo
+     índigo con "papel" granulado) — se recrea con ruido SVG en vez de subir
+     una imagen, para que se vea nítida a cualquier tamaño de pantalla. */
+  .pattern-bp-grain {
+    background-color: var(--brand-bp-indigo);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
   }
 }
