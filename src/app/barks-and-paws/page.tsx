@@ -102,9 +102,17 @@ export default async function BarksAndPawsPage() {
               Personalizamos todo tipo de productos: tazas, estaciones de comida, collares, etc.
             </p>
 
-            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
+            {/* Fila horizontal en vez de grid: así las tarjetas se quedan
+                siempre en una sola línea sin importar cuántas agregue el
+                admin (con scroll horizontal si no caben todas), en vez de
+                brincar a una segunda fila como pasaba con el grid de 3
+                columnas apenas se agregó la cuarta tarjeta (Playeras). */}
+            <div className="mt-10 flex gap-6 overflow-x-auto pb-2">
               {upcomingItems.map((item) => (
-                <div key={item.id} className="card-pop relative overflow-hidden text-left">
+                <div
+                  key={item.id}
+                  className="card-pop relative w-56 shrink-0 overflow-hidden text-left sm:w-64"
+                >
                   {item.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
