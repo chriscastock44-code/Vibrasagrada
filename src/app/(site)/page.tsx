@@ -209,6 +209,33 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* BARKS & PAWS — bloque promocional de la marca hija, justo después
+          de Destacados. Fondo índigo/teal (identidad propia de Barks &
+          Paws, distinta del resto del home) para que se note que es otra
+          marca. Todo el bloque es un solo link grande a /barks-and-paws. */}
+      <section className="border-b-2 border-brand-black">
+        <Link
+          href="/barks-and-paws"
+          className="pattern-bp-grain group block px-6 py-16 text-center sm:py-20"
+        >
+          <Image
+            src="/brand/barks-and-paws-wordmark.png"
+            alt="Barks & Paws — Custom Pet Accessories"
+            width={2867}
+            height={552}
+            className="mx-auto h-auto w-64 sm:w-80"
+          />
+          <p className="mx-auto mt-4 max-w-md text-balance font-body text-brand-cream/85">
+            🐾 Tu mascota. Su vibra. Accesorios personalizados para mascotas y sus humanos.
+          </p>
+          <span
+            className="tag-pop mt-6 inline-flex bg-white text-black transition group-hover:bg-brand-bp-teal"
+          >
+            Conoce Barks &amp; Paws →
+          </span>
+        </Link>
+      </section>
     </div>
   );
 }

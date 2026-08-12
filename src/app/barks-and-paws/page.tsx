@@ -28,8 +28,10 @@ export const dynamic = "force-dynamic";
 // enfocada en mascotas. Por ahora es solo una landing de presentación (sin
 // productos ni carrito propios) — el CTA manda directo a WhatsApp, igual
 // que "Diseños personalizados" en el home de Vibra Sagrada. Vive dentro del
-// mismo sitio en /barks-and-paws (no un dominio propio todavía), así que
-// hereda el Header y Footer de Vibra Sagrada del layout de (site).
+// mismo sitio en /barks-and-paws (no un dominio propio todavía), pero con su
+// propio layout raíz (src/app/barks-and-paws/layout.tsx, fuera del grupo de
+// rutas (site)) para poder tener su propio footer (BpFooter) en vez del
+// Footer de Vibra Sagrada.
 export default async function BarksAndPawsPage() {
   const [upcomingItems, productPhotos] = await Promise.all([
     getAllBpUpcomingItems(),
