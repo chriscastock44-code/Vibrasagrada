@@ -1,21 +1,19 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import ParallaxLayer from "@/components/ParallaxLayer";
 import BpProductPhotosCarousel from "@/components/BpProductPhotosCarousel";
 import { WHATSAPP_LINK } from "@/lib/constants";
 import { getAllBpUpcomingItems } from "@/lib/bpUpcomingItems";
 import { getAllBpProductPhotos } from "@/lib/bpProductPhotos";
 
-// El bio de la marca menciona estas tres categorías tal cual, así que van
-// fijas en el hero (no dependen de lo que el admin cargue en "Lo que
-// viene" — esa lista sí es libre y puede tener más, menos, u otros
-// nombres).
-const HERO_TAGS = ["Tags", "Bandanas", "Totes"];
+// Categorías de producto que se muestran como pills en el hero — fijas en
+// el código (no dependen de lo que el admin cargue en "Productos" más
+// abajo, esa lista sí es libre y puede tener más, menos, u otros nombres).
+const HERO_TAGS = ["Tags", "Bandanas", "Totes", "Collares", "Tazas", "Playeras"];
 
 export const metadata: Metadata = {
   title: "Barks & Paws · Vibra Sagrada",
   description:
-    "Accesorios personalizados para mascotas y sus humanos. Tags, bandanas y totes. Una marca hija de Vibra Sagrada.",
+    "Accesorios personalizados para mascotas y sus humanos. Tags, bandanas, totes, collares, tazas y playeras. Una marca hija de Vibra Sagrada.",
 };
 
 // El contenido de "Lo que viene" y "Productos ya hechos" se administra
@@ -42,25 +40,10 @@ export default async function BarksAndPawsPage() {
     <div>
       {/* HERO — mismo fondo azul/índigo (pattern-bp-grain) que el resto de
           los bloques de marca de Barks & Paws, en vez del crema que tenía
-          antes. */}
+          antes. Sin patitas decorativas ni el crédito "by @VibraSagrada"
+          (ese crédito se queda solo en el footer, en su versión sin
+          estrella y sin @). */}
       <section className="pattern-bp-grain relative overflow-hidden">
-        {/* La rotación va en un span interno, no en el ParallaxLayer: el
-            componente pisa cualquier "transform" que le pasemos por style
-            (lo necesita para su propio translate3d del scroll), así que una
-            rotación puesta ahí directamente se perdería. */}
-        <ParallaxLayer
-          speed={0.18}
-          className="pointer-events-none absolute -left-6 top-8 -z-10 opacity-10"
-        >
-          <span className="block -rotate-[18deg] text-6xl sm:text-8xl">🐾</span>
-        </ParallaxLayer>
-        <ParallaxLayer
-          speed={0.24}
-          className="pointer-events-none absolute -right-4 bottom-6 -z-10 opacity-10"
-        >
-          <span className="block rotate-[14deg] text-6xl sm:text-8xl">🐾</span>
-        </ParallaxLayer>
-
         <div className="mx-auto max-w-2xl px-6 py-16 text-center sm:py-24">
           <Image
             src="/brand/barks-and-paws-logo.png"
@@ -71,7 +54,7 @@ export default async function BarksAndPawsPage() {
             className="mx-auto h-auto w-56 sm:w-64"
           />
           <p className="mt-2 font-heading text-2xl font-extrabold text-brand-cream sm:text-3xl">
-            🐾 Tu mascota. Su vibra.
+            Tu mascota. Su vibra.
           </p>
           <p className="mx-auto mt-3 max-w-md text-balance font-body text-brand-cream/85">
             Accesorios personalizados para mascotas y sus humanos.
@@ -101,30 +84,36 @@ export default async function BarksAndPawsPage() {
               Pide tu diseño por WhatsApp
             </a>
           </div>
-
-          <p className="mt-6 font-body text-xs font-semibold text-brand-cream/70">
-            ✦ by @VibraSagrada
-          </p>
         </div>
       </section>
 
-      {/* LO QUE VIENE — tarjetas administrables desde /admin/barks-and-paws
-          (foto + título + descripción cada una). No se muestra la sección
-          si todavía no hay ninguna cargada. */}
+      {/* PRODUCTOS — tarjetas administrables desde /admin/barks-and-paws
+          (foto + título + descripción cada una). Antes era "Lo que viene"
+          (con badge "Pronto", como catálogo de próximo lanzamiento); ahora
+          son ejemplos de productos que ya se personalizan, así que se quitó
+          el badge y se cambió el copy a una invitación a preguntar por
+          WhatsApp. No se muestra la sección si todavía no hay ninguna
+          tarjeta cargada. */}
       {upcomingItems.length > 0 && (
         <section className="border-y-2 border-brand-black bg-white">
           <div className="mx-auto max-w-4xl px-6 py-16 text-center">
-            <h2 className="text-2xl font-extrabold text-black sm:text-3xl">Lo que viene</h2>
+            <h2 className="text-2xl font-extrabold text-black sm:text-3xl">Productos</h2>
             <p className="mx-auto mt-3 max-w-md text-balance font-body text-black/60">
-              Estamos preparando la primera colección, muy pronto puedes personalizar la tuya.
+              Personalizamos todo tipo de productos: tazas, estaciones de comida, collares, etc.{" "}
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold underline decoration-2 underline-offset-4 hover:text-black"
+              >
+                Consúltanos por WhatsApp
+              </a>
+              .
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
               {upcomingItems.map((item) => (
                 <div key={item.id} className="card-pop relative overflow-hidden text-left">
-                  <span className="absolute top-3 right-3 z-10 rounded-full bg-brand-black px-2.5 py-1 font-body text-[10px] font-bold tracking-wide text-white uppercase">
-                    Pronto
-                  </span>
                   {item.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img

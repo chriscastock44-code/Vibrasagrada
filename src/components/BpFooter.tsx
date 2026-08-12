@@ -11,7 +11,9 @@ const INSTAGRAM_URL =
 // Vibra Sagrada) con acentos en teal — el azul/índigo de la marca se queda
 // solo en la sección "Una marca, una familia" de la landing, para que el
 // footer se distinga de ese bloque. Sí mantiene el link de vuelta a Vibra
-// Sagrada para conservar la conexión "marca hija".
+// Sagrada para conservar la conexión "marca hija", ahora en texto plano
+// ("by Vibra Sagrada", sin estrella ni @ — el crédito con estrella y @ se
+// quitó del hero por quedar repetido).
 export default function BpFooter() {
   return (
     <footer className="mt-auto bg-brand-black text-brand-cream">
@@ -52,9 +54,7 @@ export default function BpFooter() {
             </Link>
           </div>
         </div>
-        <p className="mt-8 font-body text-xs text-brand-cream/70">
-          ✦ by @VibraSagrada, accesorios personalizados para mascotas y sus humanos.
-        </p>
+        <p className="mt-8 font-body text-xs text-brand-cream/70">by Vibra Sagrada</p>
         <p className="mt-2 font-body text-xs text-brand-cream/50">
           © {new Date().getFullYear()} Barks &amp; Paws. Todos los derechos reservados.
         </p>
