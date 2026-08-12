@@ -90,25 +90,16 @@ export default async function BarksAndPawsPage() {
       {/* PRODUCTOS — tarjetas administrables desde /admin/barks-and-paws
           (foto + título + descripción cada una). Antes era "Lo que viene"
           (con badge "Pronto", como catálogo de próximo lanzamiento); ahora
-          son ejemplos de productos que ya se personalizan, así que se quitó
-          el badge y se cambió el copy a una invitación a preguntar por
-          WhatsApp. No se muestra la sección si todavía no hay ninguna
+          son ejemplos de productos que ya se personalizan. El link a
+          WhatsApp vive como botón propio debajo de las tarjetas, no dentro
+          del párrafo. No se muestra la sección si todavía no hay ninguna
           tarjeta cargada. */}
       {upcomingItems.length > 0 && (
         <section className="border-y-2 border-brand-black bg-white">
           <div className="mx-auto max-w-4xl px-6 py-16 text-center">
             <h2 className="text-2xl font-extrabold text-black sm:text-3xl">Productos</h2>
             <p className="mx-auto mt-3 max-w-md text-balance font-body text-black/60">
-              Personalizamos todo tipo de productos: tazas, estaciones de comida, collares, etc.{" "}
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold underline decoration-2 underline-offset-4 hover:text-black"
-              >
-                Consúltanos por WhatsApp
-              </a>
-              .
+              Personalizamos todo tipo de productos: tazas, estaciones de comida, collares, etc.
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -134,6 +125,18 @@ export default async function BarksAndPawsPage() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-10">
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-pop px-8 py-3 text-sm"
+                style={{ background: "var(--brand-bp-teal)", color: "var(--brand-black)" }}
+              >
+                Consúltanos por WhatsApp
+              </a>
             </div>
           </div>
         </section>
