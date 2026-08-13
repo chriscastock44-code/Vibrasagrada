@@ -227,7 +227,7 @@ export default async function HomePage() {
             className="mx-auto h-auto w-64 sm:w-80"
           />
           <p className="mx-auto mt-4 max-w-md text-balance font-body text-brand-cream/85">
-            🐾 Tu mascota. Su vibra. Accesorios personalizados para mascotas y sus humanos.
+            Tu mascota. Su vibra. Accesorios personalizados para mascotas y sus humanos.
           </p>
           <span
             className="tag-pop mt-6 inline-flex bg-white text-black transition group-hover:bg-brand-bp-teal"
