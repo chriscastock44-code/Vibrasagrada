@@ -24,6 +24,7 @@ export interface Product {
   stock: number;
   active: boolean;
   featured: boolean;
+  showInCatalog: boolean;
   category: ProductCategory;
   sortOrder: number;
   createdAt: string;

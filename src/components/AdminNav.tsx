@@ -41,6 +41,9 @@ export default function AdminNav() {
           <Link href="/admin/barks-and-paws" className="hover:text-brand-navy">
             Barks &amp; Paws
           </Link>
+          <Link href="/admin/catalogo" className="hover:text-brand-navy">
+            Catálogo
+          </Link>
           <Link href="/tienda" target="_blank" className="hover:text-brand-navy">
             Ver tienda ↗
           </Link>

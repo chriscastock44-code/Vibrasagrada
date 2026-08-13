@@ -156,6 +156,14 @@ async function migrate(): Promise<void> {
     // dejar todos los productos empatados en 0 la primera vez.
     await db.execute("UPDATE products SET sortOrder = id");
   }
+
+  // Visibilidad en /catalogo (independiente de "active"/"featured"): se
+  // controla desde /admin/catalogo con un checkbox por producto. Default 1
+  // para no cambiar el comportamiento actual del catálogo (que hoy muestra
+  // todos los productos activos) — el catálogo público sigue exigiendo
+  // active=1 además de showInCatalog=1, así que un producto oculto de la
+  // tienda no aparece ahí aunque esta columna diga 1.
+  await ensureColumn("products", "showInCatalog", "INTEGER NOT NULL DEFAULT 1");
 }
 
 // Every query in lib/products.ts and lib/orders.ts awaits this before

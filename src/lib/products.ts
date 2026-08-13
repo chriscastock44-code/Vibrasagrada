@@ -23,6 +23,7 @@ interface ProductRow {
   stock: number;
   active: number;
   featured: number;
+  showInCatalog: number;
   category: string;
   sortOrder: number;
   createdAt: string;
@@ -42,6 +43,7 @@ function rowToProduct(row: ProductRow): Product {
     stock: Number(row.stock),
     active: !!Number(row.active),
     featured: !!Number(row.featured),
+    showInCatalog: !!Number(row.showInCatalog),
     category: (row.category as ProductCategory) || "tote",
     sortOrder: Number(row.sortOrder),
     createdAt: String(row.createdAt),
@@ -179,4 +181,19 @@ export async function updateProduct(
 export async function deleteProduct(id: number): Promise<void> {
   await ready;
   await db.execute({ sql: "DELETE FROM products WHERE id = ?", args: [id] });
+}
+
+// Prende/apaga un producto en /catalogo, desde /admin/catalogo. Es una
+// actualización aparte de updateProduct (que exige el ProductInput
+// completo) porque este checkbox se guarda solo, uno por uno, sin pasar
+// por el formulario completo de edición del producto.
+export async function setProductCatalogVisibility(
+  id: number,
+  showInCatalog: boolean
+): Promise<void> {
+  await ready;
+  await db.execute({
+    sql: "UPDATE products SET showInCatalog = @showInCatalog WHERE id = @id",
+    args: { id, showInCatalog: showInCatalog ? 1 : 0 },
+  });
 }

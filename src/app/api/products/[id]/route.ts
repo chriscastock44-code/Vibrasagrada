@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProductById, updateProduct, deleteProduct, friendlyDbError } from "@/lib/products";
+import {
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  setProductCatalogVisibility,
+  friendlyDbError,
+} from "@/lib/products";
 import { isAdminAuthenticated } from "@/lib/auth";
 import type { ProductInput } from "@/lib/types";
 
@@ -35,6 +41,27 @@ export async function PUT(
   } catch (err) {
     return NextResponse.json({ error: friendlyDbError(err) }, { status: 400 });
   }
+}
+
+// Solo para el checkbox de /admin/catalogo — a propósito no reutiliza PUT
+// (que exige el ProductInput completo) para no tener que mandar todo el
+// producto solo para prender/apagar esta casilla.
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!(await isAdminAuthenticated())) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const body = (await request.json()) as { showInCatalog?: boolean };
+  if (typeof body.showInCatalog !== "boolean") {
+    return NextResponse.json({ error: "showInCatalog es requerido" }, { status: 400 });
+  }
+
+  await setProductCatalogVisibility(Number(id), body.showInCatalog);
+  return NextResponse.json({ ok: true });
 }
 
 export async function DELETE(

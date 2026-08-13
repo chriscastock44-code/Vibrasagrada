@@ -1,19 +1,16 @@
 import Image from "next/image";
 import { getAllProducts } from "@/lib/products";
-import type { ProductCategory } from "@/lib/types";
+import CatalogGrid from "@/components/CatalogGrid";
 
-// Productos activos, en el mismo orden manual que ya se usa en /tienda —
-// se jalan directo de la base de datos así que el catálogo siempre está al
-// día con lo que haya cargado en /admin, sin mantenimiento aparte.
+// Productos activos Y marcados para el catálogo (checkbox en
+// /admin/catalogo), en el mismo orden manual que ya se usa en /tienda — se
+// jalan directo de la base de datos así que el catálogo siempre está al día
+// con lo que haya cargado en /admin, sin mantenimiento aparte.
 export const dynamic = "force-dynamic";
 
-const CATEGORY_LABEL: Record<ProductCategory, string> = {
-  tote: "Tote bag",
-  playera: "Playera",
-};
-
 export default async function CatalogoPage() {
-  const products = await getAllProducts({ onlyActive: true });
+  const allActive = await getAllProducts({ onlyActive: true });
+  const products = allActive.filter((product) => product.showInCatalog);
 
   return (
     <div>
@@ -55,33 +52,11 @@ export default async function CatalogoPage() {
       </div>
 
       {products.length > 0 ? (
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 pb-20 sm:grid-cols-3 lg:grid-cols-4">
-          {products.map((product) => (
-            <div key={product.id} className="card-pop overflow-hidden text-left">
-              {product.images[0] ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  className="aspect-square w-full border-b-2 border-brand-black object-cover"
-                />
-              ) : (
-                <div className="flex aspect-square w-full items-center justify-center border-b-2 border-brand-black bg-brand-cream text-xs text-black/30">
-                  Sin imagen
-                </div>
-              )}
-              <div className="px-4 py-3">
-                <h3 className="font-heading text-sm font-bold text-black">{product.name}</h3>
-                <p className="text-[11px] font-semibold tracking-wide text-black/45 uppercase">
-                  {CATEGORY_LABEL[product.category]}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <CatalogGrid products={products} />
       ) : (
         <p className="mx-auto max-w-md px-6 pb-20 text-center font-body text-sm text-black/50">
-          Todavía no hay productos activos cargados en la tienda.
+          Todavía no hay productos marcados para el catálogo. Actívalos desde
+          /admin/catalogo.
         </p>
       )}
 
