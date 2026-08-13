@@ -102,33 +102,35 @@ export default async function BarksAndPawsPage() {
               Personalizamos todo tipo de productos: tazas, estaciones de comida, collares, etc.
             </p>
 
-            {/* Fila horizontal en vez de grid: así las tarjetas se quedan
-                siempre en una sola línea sin importar cuántas agregue el
-                admin (con scroll horizontal si no caben todas), en vez de
-                brincar a una segunda fila como pasaba con el grid de 3
-                columnas apenas se agregó la cuarta tarjeta (Playeras). */}
-            <div className="mt-10 flex gap-6 overflow-x-auto pb-2">
+            {/* Grid de N columnas (una por tarjeta, sin límite fijo de 3) en
+                vez de scroll horizontal: todas las tarjetas quedan visibles
+                en una sola fila, encogiéndose para caber. */}
+            <div
+              className="mt-10 grid gap-3 sm:gap-6"
+              style={{ gridTemplateColumns: `repeat(${upcomingItems.length}, minmax(0, 1fr))` }}
+            >
               {upcomingItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="card-pop relative w-56 shrink-0 overflow-hidden text-left sm:w-64"
-                >
+                <div key={item.id} className="card-pop relative overflow-hidden text-left">
                   {item.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={item.imageUrl}
                       alt=""
-                      className="h-40 w-full border-b-2 border-brand-black object-cover"
+                      className="h-20 w-full border-b-2 border-brand-black object-cover sm:h-40"
                     />
                   ) : (
-                    <div className="flex h-40 w-full items-center justify-center border-b-2 border-brand-black bg-brand-cream text-xs text-black/30">
+                    <div className="flex h-20 w-full items-center justify-center border-b-2 border-brand-black bg-brand-cream text-[10px] text-black/30 sm:h-40 sm:text-xs">
                       Sin imagen
                     </div>
                   )}
-                  <div className="px-5 py-4 text-center">
-                    <h3 className="font-heading text-base font-bold text-black">{item.title}</h3>
+                  <div className="px-2 py-2 text-center sm:px-5 sm:py-4">
+                    <h3 className="font-heading text-xs font-bold text-black sm:text-base">
+                      {item.title}
+                    </h3>
                     {item.description && (
-                      <p className="mt-1 font-body text-xs text-black/55">{item.description}</p>
+                      <p className="mt-1 hidden font-body text-xs text-black/55 sm:block">
+                        {item.description}
+                      </p>
                     )}
                   </div>
                 </div>
