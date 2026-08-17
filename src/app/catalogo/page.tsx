@@ -2,15 +2,16 @@ import Image from "next/image";
 import { getAllProducts } from "@/lib/products";
 import CatalogGrid from "@/components/CatalogGrid";
 
-// Productos activos Y marcados para el catálogo (checkbox en
-// /admin/catalogo), en el mismo orden manual que ya se usa en /tienda — se
-// jalan directo de la base de datos así que el catálogo siempre está al día
-// con lo que haya cargado en /admin, sin mantenimiento aparte.
+// Productos marcados para el catálogo (checkbox en /admin/catalogo), sin
+// importar si siguen activos en la tienda — a propósito NO se filtra por
+// "active" aquí: hay piezas que ya se vendieron por fuera (por eso están
+// ocultas de /tienda) pero que igual se quieren mostrar en este catálogo,
+// así que el checkbox de /admin/catalogo manda solo, sin condición extra.
 export const dynamic = "force-dynamic";
 
 export default async function CatalogoPage() {
-  const allActive = await getAllProducts({ onlyActive: true });
-  const products = allActive.filter((product) => product.showInCatalog);
+  const allProducts = await getAllProducts();
+  const products = allProducts.filter((product) => product.showInCatalog);
 
   return (
     <div>
@@ -55,7 +56,7 @@ export default async function CatalogoPage() {
         <CatalogGrid products={products} />
       ) : (
         <p className="mx-auto max-w-md px-6 pb-20 text-center font-body text-sm text-black/50">
-          Todavía no hay productos marcados para el catálogo. Actívalos desde
+          Todavía no hay productos marcados para el catálogo. Márcalos desde
           /admin/catalogo.
         </p>
       )}

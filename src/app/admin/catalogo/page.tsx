@@ -26,8 +26,9 @@ export default async function AdminCatalogoPage() {
           >
             /catalogo
           </a>{" "}
-          (el catálogo privado, solo accesible por enlace). Un producto oculto de la tienda no
-          aparece ahí aunque esté marcado, hasta que también lo actives.
+          (el catálogo privado, solo accesible por enlace). El checkbox manda solo: si lo marcas,
+          el producto aparece en el catálogo aunque ya esté oculto o inactivo en la tienda (útil
+          para piezas que ya vendiste por fuera pero quieres seguir mostrando aquí).
         </p>
 
         {products.length === 0 ? (
